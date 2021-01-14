@@ -1,0 +1,1836 @@
+{
+	"version" : "3.6",
+	"commands":{
+		"t_hs" : { 
+			"name" : "Vorlauftemperatur_Waermeerzeuger", 
+			"command" : "31 00 FA 01 D6 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_hs_set" : { 
+			"name" : "Soll_Vorlauftemperatur_Waermeerzeuger", 
+			"command" : "31 00 02 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 30,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"water_pressure" : { 
+			"name" : "Wasserdruck", 
+			"command" : "31 00 1C 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "1000", 
+			"writable" : "false", 
+			"FHEMPollTime" : 600,
+			"unit" : "bar",
+			"type" : "float"
+		},
+		"t_ext" : { 
+			"name" : "T_Aussen_gemittelt", 
+			"command" : "61 00 FA 0A 0C 00 00", 
+			"id" : "310", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 120,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_dhw" : { 
+			"name" : "T_Warmwasser", 
+			"command" : "31 00 0E 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 60,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_dhw_set" : { 
+			"name" : "Soll_T_Warmwasser", 
+			"command" : "31 00 03 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 60,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_return" : { 
+			"name" : "t_return", 
+			"command" : "31 00 16 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"flow_rate" : { 
+			"name" : "Durchfluss", 
+			"command" : "31 00 FA 01 DA 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "lh",
+			"type" : "longint"
+		},
+		"t_hc" : { 
+			"name" : "T_direkter_Heizkreis",
+			"command" : "C1 00 0F 00 00 00 00", 
+			"id" : "610", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_hc_set" : { 
+			"name" : "Soll_T_direkter_Heizkreis", 
+			"command" : "61 00 04 00 00 00 00", 
+			"id" : "310", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 30,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"status_pump" : { 
+			"name" : "Direkter_Heizkreis_Modus", 
+			"command" : "31 00 FA 0A 8C 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 30,
+			"unit" : "code",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "power-saving",
+				"1" : "active"
+			}
+		},
+		"runtime_comp" : { 
+			"name" : "Laufzeit_Kompressor",
+			"command" : "31 00 FA 06 A5 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "hour",
+			"type" : "longint"
+		},
+		"runtime_pump" : { 
+			"name" : "Laufzeit_UWPumpe", 
+			"command" : "31 00 FA 06 A4 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "hour",
+			"type" : "longint"
+		},
+		"posmix" : { 
+			"name" : "Pos_Vent_3UV_DHW", 
+			"command" : "31 00 FA 06 9B 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "percent",
+			"type" : "longint"
+		},
+		"qboh" : { 
+			"name" : "EHS_fuer_WW", 
+			"command" : "31 00 FA 09 1C 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"qchhp" : { 
+			"name" : "EHS_fuer_Heizung", 
+			"command" : "31 00 FA 09 20 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"qsc" : { 
+			"name" : "Energie_Kuehlung", 
+			"command" : "31 00 FA 06 A6 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"qch" : { 
+			"name" : "Energie_Heizung", 
+			"command" : "31 00 FA 06 A7 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"qwp" : { 
+			"name" : "Energie_erzeugt_gesamt", 
+			"command" : "31 00 FA 09 30 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"qdhw" : { 
+			"name" : "Energie_WW", 
+			"command" : "31 00 FA 09 2C 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 300,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"sw_vers_01" : { 
+			"name" : "sw_vers_01", 
+			"command" : "31 00 FA 01 99 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "longint"
+		},
+		"sw_vers_02" : { 
+			"name" : "sw_vers_02", 
+			"command" : "31 00 FA C0 B4 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "longint"
+		},
+		"sw_vers_03" : { 
+			"name" : "sw_vers_03", 
+			"command" : "31 00 FA 02 4B 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "longint"
+		},
+		"mode_01" : { 
+			"name" : "Betriebsart", 
+			"command" : "31 00 FA 01 12 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true",
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 60,
+			"unit" : "code",
+			"type" : "value",
+			"value_code" : {
+				"1" : "Bereitschaft",
+				"3" : "Heizen",
+				"4" : "Absenken",
+				"5" : "Sommer", 
+				"17" : "Kuehlen",
+				"11" : "Auto1",
+				"12" : "Auto2"
+			}
+		},
+		"tvbh2" : { 
+			"name" : "TVBH", 
+			"command" : "31 00 FA C1 02", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 30,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"tliq2" : { 
+			"name" : "Kaeltemitteltemperatur", 
+			"command" : "31 00 FA C1 03", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"tr2" : { 
+			"name" : "Ruecklauftemperatur", 
+			"command" : "31 00 FA C1 04", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"ta2" : { 
+			"name" : "T_Aussen_WP", 
+			"command" : "31 00 FA C1 05", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 60,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"tdhw2" : { 
+			"name" : "tdhw2", 
+			"command" : "31 00 FA C1 06", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"quiet" : { 
+			"name" : "quiet", 
+			"command" : "31 00 FA C1 07", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "code",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "activated",
+				"2" : "only_at_night"
+			}
+		},
+		"mode" : { 
+			"name" : "Aktive_Betriebsart", 
+			"command" : "31 00 FA C0 F6", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 5,
+			"unit" : "code",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "Standby",
+				"1" : "Heizen",
+				"2" : "Kuehlen", 
+				"3" : "Abtauen",
+				"4" : "Warmwasserbereitung"
+			}
+		},
+		"pump" : { 
+			"name" : "UWPumpe", 
+			"command" : "31 00 FA C0 F7", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "percent",
+			"type" : "longint"
+		},
+		"ext" : { 
+			"name" : "ext", 
+			"command" : "31 00 FA C0 F8", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "longint",
+			"type" : "longint"
+		},
+		"ehs" : { 
+			"name" : "ehs", 
+			"command" : "31 00 FA C0 F9", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 5,
+			"unit" : "kwh",
+			"type" : "longint"
+		},
+		"rt" : { 
+			"name" : "rt", 
+			"command" : "31 00 FA C0 FA", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "longint",
+			"type" : "longint"
+		},
+		"bpv" : { 
+			"name" : "Pos_Vent_3UVB1", 
+			"command" : "31 00 FA C0 FB", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "percent",
+			"type" : "longint"
+		},
+		"t_v1" : { 
+			"name" : "t_v1", 
+			"command" : "31 00 FA C0 FC", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_dhw1" : { 
+			"name" : "t_dhw1", 
+			"command" : "31 00 FA C0 FD", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_vbh" : { 
+			"name" : "t_vbh", 
+			"command" : "31 00 FA C0 FE", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_outdoor_ot1" : { 
+			"name" : "T_Aussen", 
+			"command" : "31 00 FA C0 FF", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 60,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_r1" : { 
+			"name" : "Heizung_Ruecklauf", 
+			"command" : "31 00 FA C1 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 10,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"v1" : { 
+			"name" : "v1", 
+			"command" : "31 00 FA C1 01", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "lh",
+			"type" : "longint"
+		},
+		"t_room1_setpoint" : { 
+			"name" : "Soll_T_Raum_1", 
+			"command" : "31 00 05 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,5,0.5,40,1",
+			"FHEMPollTime" : 60,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_room2_setpoint" : { 
+			"name" : "Soll_T_Raum_2", 
+			"command" : "31 00 06 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,5,0.5,40,1",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_room3_setpoint" : { 
+			"name" : "Soll_T_Raum_3", 
+			"command" : "31 00 07 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,5,0.5,40,1",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"heat_slope" : { 
+			"name" : "Heizkurve", 
+			"command" : "31 00 FA 01 0E 00 00", 
+			"id" : "190", 
+			"divisor" : "100", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,0,0.1,3,1",
+			"FHEMPollTime" : 600,
+			"unit" : "",
+			"type" : "float"
+		},
+		"t_dhw_setpoint1" : { 
+			"name" : "Soll_T_Warmwasser_1",
+			"command" : "31 00 13 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,35,1,70",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_dhw_setpoint2" : { 
+			"name" : "Soll_T_Warmwasser_2", 
+			"command" : "31 00 FA 0A 06 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,35,1,70",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_dhw_setpoint3" : { 
+			"name" : "Soll_T_Warmwasser_3", 
+			"command" : "31 00 FA 01 3E 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,35,1,70",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"hyst_hp" : { 
+			"name" : "hyst_hp", 
+			"command" : "31 00 FA 06 91 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"error" : { 
+			"name" : "error", 
+			"command" : "31 00 FA 13 88 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value"
+		},
+		"outdoor_type" : { 
+			"name" : "Aussengeraet", 
+			"command" : "31 00 FA 06 9A 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 0,
+			"unit" : "KW",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "--",
+				"1" : "4",
+				"2" : "6",
+				"3" : "8", 
+				"4" : "11",
+				"5" : "14",
+				"6" : "16"
+			}
+		},
+		"indoor_unit" : { 
+			"name" : "Innengeraet", 
+			"command" : "31 00 FA 06 99 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "--",
+				"1" : "304",
+				"2" : "308",
+				"3"	: "508",
+				"4" : "516"
+			}
+		},
+		"func_heating" : { 
+			"name" : "Funktion_EHS", 
+			"command" : "A1 00 FA 06 D2 00 00", 
+			"id" : "510", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,0,1,3",
+			"FHEMPollTime" : 600,
+			"unit" : "",
+			"type" : "longint"
+		},
+		"hzu" : { 
+			"name" : "HZ_Unterstuetzung", 
+			"command" : "31 00 FA 06 6C 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"equi_func" : { 
+			"name" : "Bivalenzfunktion", 
+			"command" : "A1 00 FA 06 D3 00 00", 
+			"id" : "510", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"smart_grid" : { 
+			"name" : "smart_grid", 
+			"command" : "31 00 FA 06 93 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"modus_sg" : { 
+			"name" : "modus_sg", 
+			"command" : "31 00 FA 06 94 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "comfort",
+				"1" : "standard",
+				"2" : "eco"
+			}
+		},
+		"ht_nt_func" : { 
+			"name" : "ht_nt_func", 
+			"command" : "31 00 FA 06 6F 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "deactivated",
+				"1" : "compressor off",
+				"2" : "compressor off, reserve heating off",
+				"3" : "all off"
+			}
+		},
+		"ht_nt_contact" : { 
+			"name" : "ht_nt_contact", 
+			"command" : "31 00 FA 06 70 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "NO",
+				"1" : "NC"
+			}
+		},
+		"room_therm" : { 
+			"name" : "room_therm", 
+			"command" : "31 00 FA 06 78 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"interlink" : { 
+			"name" : "interlink", 
+			"command" : "31 00 FA 06 79 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"air_purge" : { 
+			"name" : "air_purge", 
+			"command" : "31 00 FA 06 95 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"max_perf_pump" : { 
+			"name" : "Max_Leistung_Pumpe", 
+			"command" : "31 00 FA 06 7E 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,100",
+			"FHEMPollTime" : 0,
+			"unit" : "percent",
+			"type" : "longint"
+		},
+		"min_perf_pump" : { 
+			"name" : "Min_Leistung_Pumpe", 
+			"command" : "31 00 FA 06 7F 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,10,1,100",
+			"FHEMPollTime" : 0,
+			"unit" : "percent",
+			"type" : "longint"
+		},
+		"outside_conf" : { 
+			"name" : "outside_conf", 
+			"command" : "31 00 FA 09 61 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"4" : "off",
+				"5" : "on"
+			}
+		},
+		"storage_conf" : { 
+			"name" : "storage_conf", 
+			"command" : "31 00 FA 09 61 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"2" : "thermostat",
+				"4" : "sensor"
+			}
+		},
+		"pres_conf" : { 
+			"name" : "pres_conf", 
+			"command" : "31 00 FA 09 61 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"10244" : "off",
+				"26628" : "on"
+			}
+		},
+		"out_temp_adapt" : { 
+			"name" : "out_temp_adapt", 
+			"command" : "61 00 FA 0C 1F 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"power_dhw" : { 
+			"name" : "power_dhw", 
+			"command" : "31 00 FA 06 68 00 00", 
+			"id" : "190", 
+			"divisor" : "0.1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "w",
+			"type" : "longint"
+		},
+		"buh_s1_pow" : { 
+			"name" : "buh_s1_pow", 
+			"command" : "31 00 FA 06 69 00 00", 
+			"id" : "190", 
+			"divisor" : "0.1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "w",
+			"type" : "longint"
+		},
+		"buh_s2_pow" : { 
+			"name" : "buh_s2_pow", 
+			"command" : "31 00 FA 06 6A 00 00", 
+			"id" : "190", 
+			"divisor" : "0.1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "w",
+			"type" : "longint"
+		},
+		"power_biv" : { 
+			"name" : "power_biv", 
+			"command" : "31 00 FA 06 6B 00 00", 
+			"id" : "190", 
+			"divisor" : "0.1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "w",
+			"type" : "longint"
+		},
+		"tdiff_dhw_ch" : { 
+			"name" : "TDiff_WW_HZU", 
+			"command" : "31 00 FA 06 6D 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,2,1,15",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_vbh1_max" : { 
+			"name" : "t_vbh1_max", 
+			"command" : "31 00 FA 06 6E 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"equi_temp" : { 
+			"name" : "equi_temp", 
+			"command" : "A1 00 FA 06 D4 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"quiet_mode" : { 
+			"name" : "Fluesterbetrieb", 
+			"command" : "31 00 FA 06 96 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true",
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 600,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "Aus",
+				"1" : "Ein",
+				"2" : "Nur_bei_Nacht"
+			}
+		},
+		"aux_fct" : { 
+			"name" : "aux_fct", 
+			"command" : "31 00 FA 06 71 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "longint",
+			"type" : "value"
+		},
+		"aux_time" : { 
+			"name" : "aux_time", 
+			"command" : "31 00 FA 06 72 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "sec",
+			"type" : "longint"
+		},
+		"t_dhw_1_min" : { 
+			"name" : "Schaltschwelle_AUX_TDHW", 
+			"command" : "31 00 FA 06 73 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,85",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"delta_t_ch" : { 
+			"name" : "Spreizung_Mod_HZ", 
+			"command" : "31 00 FA 06 83 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,2,1,20",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"v_var" : { 
+			"name" : "v_var", 
+			"command" : "31 00 FA 06 9C 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "lh",
+			"type" : "longint"
+		},
+		"t_flow_ch_adj" : { 
+			"name" : "Anpass_T_VL_Heizen", 
+			"command" : "31 00 FA 06 A0 00 00", 
+			"id" : "10A", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_flow_cool_adj" : { 
+			"name" : "Anpass_T_VL_Kuehlen", 
+			"command" : "31 00 FA 06 A1 00 00", 
+			"id" : "10A", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"min_pressure" : { 
+			"name" : "min_pressure", 
+			"command" : "31 00 FA 07 28 00 00", 
+			"id" : "190", 
+			"divisor" : "1000", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "bar",
+			"type" : "float"
+		},
+		"max_pressure" : { 
+			"name" : "max_pressure", 
+			"command" : "31 00 FA 07 27 00 00", 
+			"id" : "190", 
+			"divisor" : "1000", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "bar",
+			"type" : "float"
+		},
+		"setpoint_pressure" : { 
+			"name" : "setpoint_pressure", 
+			"command" : "31 00 FA 07 25 00 00", 
+			"id" : "190", 
+			"divisor" : "1000", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "bar",
+			"type" : "float"
+		},
+		"max_pressure_drop" : { 
+			"name" : "max_pressure_drop", 
+			"command" : "31 00 FA 07 26 00 00", 
+			"id" : "190", 
+			"divisor" : "1000", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "bar",
+			"type" : "float"
+		},
+		"hc_func" : { 
+			"name" : "HK_Funktion", 
+			"command" : "61 00 FA 01 41 00 00", 
+			"id" : "310", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 600,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "Witterung",
+				"1" : "Fest"
+			}
+		},
+		"t_frost_protect" : { 
+			"name" : "T_Frostschutz", 
+			"command" : "61 00 FA 0A 00 00 00", 
+			"id" : "310", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 900,
+			"unit" : "value_code_signed",
+			"type" : "float",
+			"value_code" : {
+				"50" : "5",
+				"40" : "4",
+				"30" : "3",
+				"20" : "2", 
+				"10" : "1",
+				"0" : "0",
+				"-10" : "-1",
+				"-20" : "-2",
+				"-30" : "-3",
+				"-40" : "-4",
+				"-50" : "-5",
+				"-60" : "-6",
+				"-70" : "-7",
+				"-80" : "-8",
+				"-90" : "-9",
+				"-100" : "-10",
+				"-110" : "-11",
+				"-120" : "-12",
+				"-130" : "-13",
+				"-140" : "-14",
+				"-150" : "-15",
+				"-160" : "Aus"
+      }
+		},
+		"insulation" : { 
+			"name" : "insulation", 
+			"command" : "61 00 FA 01 0C 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"512" : "low",
+				"1024" : "normal",
+				"2048" : "good",
+				"3072" : "very good"
+			}
+		},
+		"screed" : { 
+			"name" : "screed", 
+			"command" : "61 00 FA 01 1A 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"256" : "on"
+			}
+		},
+		"t_screed_day1" : { 
+			"name" : "screed_day1", 
+			"command" : "61 00 FA 0B B9 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day2" : { 
+			"name" : "screed_day2", 
+			"command" : "61 00 FA 0B BA 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day3" : { 
+			"name" : "screed_day3", 
+			"command" : "61 00 FA 0B BB 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day4" : { 
+			"name" : "screed_day4", 
+			"command" : "61 00 FA 0B BC 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day5" : { 
+			"name" : "screed_day5", 
+			"command" : "61 00 FA 0B BD 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day6" : { 
+			"name" : "screed_day6", 
+			"command" : "61 00 FA 0B BE 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day7" : { 
+			"name" : "screed_day7", 
+			"command" : "61 00 FA 0B BD 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day8" : { 
+			"name" : "screed_day8", 
+			"command" : "61 00 FA 0B C0 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day9" : { 
+			"name" : "screed_day9", 
+			"command" : "61 00 FA 0B C1 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day10" : { 
+			"name" : "screed_day10", 
+			"command" : "61 00 FA 0B C2 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day11" : { 
+			"name" : "screed_day11", 
+			"command" : "61 00 FA 0B C3 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day12" : { 
+			"name" : "screed_day12", 
+			"command" : "61 00 FA 0B C4 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day13" : { 
+			"name" : "screed_day13", 
+			"command" : "61 00 FA 0B C5 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day14" : { 
+			"name" : "screed_day14", 
+			"command" : "61 00 FA 0B C6 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day15" : { 
+			"name" : "screed_day15", 
+			"command" : "61 00 FA 0B C7 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day16" : { 
+			"name" : "screed_day16", 
+			"command" : "61 00 FA 0B C8 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day17" : { 
+			"name" : "screed_day17", 
+			"command" : "61 00 FA 0B C9 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day18" : { 
+			"name" : "screed_day18", 
+			"command" : "61 00 FA 0B CA 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day19" : { 
+			"name" : "screed_day19", 
+			"command" : "61 00 FA 0B CB 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day20" : { 
+			"name" : "screed_day20", 
+			"command" : "61 00 FA 0B CC 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day21" : { 
+			"name" : "screed_day21", 
+			"command" : "61 00 FA 0B CD 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day22" : { 
+			"name" : "screed_day22", 
+			"command" : "61 00 FA 0B CD 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day23" : { 
+			"name" : "screed_day23", 
+			"command" : "61 00 FA 0B CF 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day24" : { 
+			"name" : "screed_day24", 
+			"command" : "61 00 FA 0B D0 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day25" : { 
+			"name" : "screed_day25", 
+			"command" : "61 00 FA 0B D1 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day26" : { 
+			"name" : "screed_day26", 
+			"command" : "61 00 FA 0B D2 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day27" : { 
+			"name" : "screed_day27", 
+			"command" : "61 00 FA 0B D3 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_screed_day28" : { 
+			"name" : "screed_day28", 
+			"command" : "61 00 FA 0B D4 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_out_lim_day" : { 
+			"name" : "Heizgrenze_Tag", 
+			"command" : "31 00 FA 01 16 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,10,1,40",
+			"FHEMPollTime" : 900,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_out_lim_night" : { 
+			"name" : "Heizgrenze_Nacht", 
+			"command" : "61 00 FA 01 17 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,10,1,40",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_flow_day" : { 
+			"name" : "T_Vorlauf_Tag", 
+			"command" : "31 00 FA 01 29 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,90",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_flow_night" : { 
+			"name" : "T_Vorlauf_Nacht", 
+			"command" : "31 00 FA 01 2A 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,90",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"max_t_flow" : { 
+			"name" : "Max_T_Vorlauf", 
+			"command" : "31 00 28 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,90",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"min_t_flow" : { 
+			"name" : "Min_T_Vorlauf", 
+			"command" : "31 00 FA 01 2B 00 00", 
+			"id" : "190",
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,18,1,90",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"hc_adapt" : { 
+			"name" : "hc_adapt", 
+			"command" : "31 00 FA 01 15 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"256" : "on"
+			}
+		},
+		"start_tout_cool" : { 
+			"name" : "Kuehlen_A_Temp_Start", 
+			"command" : "31 00 FA 13 5B 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,15,1,45",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"max_tout_cool" : { 
+			"name" : "Kuehlen_A_Temp_Max", 
+			"command" : "31 00 FA 13 5C 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,45",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_flow_cool_start" : { 
+			"name" : "Kuehlen_VL_Soll_Start", 
+			"command" : "31 00 FA 13 5D 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,5,1,25",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_flow_cool_max" : { 
+			"name" : "Kuehlen_VL_Soll_Max", 
+			"command" : "31 00 FA 13 5E 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,5,1,25",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"min_t_flow_cool" : { 
+			"name" : "Kuehlen_VL_Soll_Abs_Min", 
+			"command" : "31 00 FA 13 63 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,5,1,25",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_flow_cool" : { 
+			"name" : "Kuehlen_VL_Soll_HK_On",
+			"command" : "61 00 FA 03 DD 00 00", 
+			"id" : "10A", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"cool_setpoint_adj" : { 
+			"name" : "Kuehl_Soll_Korr_Parallel", 
+			"command" : "31 00 FA 13 59 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,-5,0.1,5,1",
+			"FHEMPollTime" : 600,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"circ_pump_dhw" : { 
+			"name" : "circ_pump_dhw", 
+			"command" : "31 00 FA 01 82 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"circ_pump_interval" : { 
+			"name" : "circ_pump_interval", 
+			"command" : "31 00 FA 06 5E 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "longint",
+			"type" : "value"
+		},
+		"anti_leg_day" : { 
+			"name" : "anti_leg_day", 
+			"command" : "31 00 FA 01 01 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"256" : "Monday",
+				"512" : "Tuesday",
+				"768" : "Wednesday",
+				"1024" : "Thursday",
+				"1280" : "Friday",
+				"1536" : "Saturday",
+				"1792" : "Sunday",
+				"2048" : "Everyday"
+			}
+		},
+		"anti_leg_time" : { 
+			"name" : "anti_leg_time", 
+			"command" : "31 00 FA FD F4 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "longint",
+			"type" : "value"
+		},
+		"anti_leg_temp" : { 
+			"name" : "anti_leg_temp", 
+			"command" : "31 00 FA 05 87 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"max_dhw_loading" : { 
+			"name" : "Max_WW_Ladezeit", 
+			"command" : "31 00 FA 01 80 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,0,1,240",
+			"FHEMPollTime" : 0,
+			"unit" : "min",
+			"type" : "longint"
+		},
+		"dhw_off_time" : { 
+			"name" : "WW_Sperrzeit", 
+			"command" : "31 00 FA 4E 3F 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,0,1,240",
+			"FHEMPollTime" : 0,
+			"unit" : "min",
+			"type" : "float"
+		},
+		"one_hot_water" : { 
+			"name" : "one_hot_water", 
+			"command" : "31 00 FA 01 44 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value",
+			"value_code" : {
+				"0" : "off",
+				"1" : "on"
+			}
+		},
+		"timer_boh" : { 
+			"name" : "Wartezeit_BOH", 
+			"command" : "31 00 FA 06 92 00 00", 
+			"id" : "190", 
+			"divisor" : "1", 
+			"writable" : "true", 
+			"FHEMControl" : "slider,20,1,95",
+			"FHEMPollTime" : 120,
+			"unit" : "min",
+			"type" : "longint"
+		},
+		"t_reduced" : { 
+			"name" : "T_Absenkung", 
+			"command" : "31 00 08 00 00 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_absence" : { 
+			"name" : "T_Abwesend", 
+			"command" : "31 00 FA 01 3D 00 00", 
+			"id" : "190", 
+			"divisor" : "10", 
+			"writable" : "true", 
+			"FHEMControl" : "disabled",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_room" :{
+			"name" : "Raumtemperatur_Rocon_U1",
+			"command" : "81 00 FA 00 11 00 00",
+			"id" : "190",
+			"divisor" : "10",
+			"writable" : "false",
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_outdoor_ot1_MA" : {
+			"name" : "T_Aussen_MA",
+			"command" : "20 0A 0C 00 00 00 00", 
+			"id" : "-1", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_dhw_MA" : { 
+			"name" : "T_Warmwasser_MA", 
+			"command" : "20 0A FA 0A 2B 00 00", 
+			"id" : "-1", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_hc_MA1" : { 
+			"name" : "T_direkter_Heizkreis_MA1",
+			"command" : "20 0A FA 08 22 00 00", 
+			"id" : "-1", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"t_hc_MA2" : { 
+			"name" : "T_direkter_Heizkreis_MA2",
+			"command" : "20 0A 0D 00 00 00 00", 
+			"id" : "-1", 
+			"divisor" : "10", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "deg",
+			"type" : "float"
+		},  		
+		"BM1_day_MA" : { 
+			"name" : "BM1_Tag_MA",
+			"command" : "20 0A FA 01 22 00 00", 
+			"id" : "-1", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value"
+		},  
+		"BM1_month_MA" : { 
+			"name" : "BM1_Monat_MA",
+			"command" : "20 0A FA 01 23 00 00", 
+			"id" : "-1", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value"
+		},  
+		"BM1_year_MA" : { 
+			"name" : "BM1_Jahr_MA",
+			"command" : "20 0A FA 01 24 00 00", 
+			"id" : "-1", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value"
+		},  
+		"BM1_hour_MA" : { 
+			"name" : "BM1_Stunde_MA",
+			"command" : "20 0A FA 01 25 00 00", 
+			"id" : "-1", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value"
+		},  
+		"BM1_minute_MA" : { 
+			"name" : "BM1_Minute_MA",
+			"command" : "20 0A FA 01 26 00 00", 
+			"id" : "-1", 
+			"divisor" : "1", 
+			"writable" : "false", 
+			"FHEMPollTime" : 0,
+			"unit" : "",
+			"type" : "value"
+		},
+		"mode_01_MA" : { 
+			"name" : "Betriebsart_MA", 
+			"command" : "20 0A 5A 00 00 00 00", 
+			"id" : "-1", 
+			"divisor" : "1", 
+			"writable" : "false",
+			"FHEMPollTime" : 0,
+			"unit" : "code",
+			"type" : "value",
+			"value_code" : {
+				"1" : "Bereitschaft",
+				"3" : "Heizen",
+				"4" : "Absenken",
+				"5" : "Sommer", 
+				"17" : "Kuehlen",
+				"11" : "Auto1",
+				"12" : "Auto2"
+			}
+		}    
+	}
+}
