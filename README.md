@@ -56,3 +56,6 @@ Changelog:
 - Neues Reading: Info.LastDefrostDHWShrink (verringerung der WW Temp. beim letzten Abtauvorgang)
 - Neues Attribut: SuppressRetryWarnings (retries nicht loggen)
 - Neues Attribut: RememberSetValues (den zuletzt gesetzten Modus beim Init senden)
+
+1.12 # 24.01.21
+- Modus Monitor_Mode: Erweiterung mit der Ausgabe des Headers im Readingnamen, In der Readingsvalue Bits entfernt aber Msg hinzugefügt, Float auch ins negative
