@@ -46,14 +46,18 @@
 # ah 1.10 - 07.01.21 - Force "t_frost_protect" if AntiContinousHeating is set to "on"
 #                    - if t_frost_protect_lst ne "NotRead"Force then change not "t_frost_protect"
 #                    - Min / max check corrected
-# ah 1.11 - 14.01.21 - Parse_SetGet_cmd() to find out cmd send via Set or Get argument
+# ah 1.11 - 11.01.21 - Parse_SetGet_cmd() to find out cmd send via Set or Get argument
 #                    -         |-> https://forum.fhem.de/index.php/topic,106503.msg1119787.html#msg1119787
 #                    - Sort set an get dropdowns
 #                    - When init then cancel DHWForce (with -1)
 #                    - New reading: Info.LastDefrostDHWShrink (if mode heating)
 #                    - New attribute: SuppressRetryWarnings - to relieve logging
 #                    - New attribute: (experimental state !!) - RememberSetValues - save mode_01 val and set after module init
-#                    - "Infoname" if val set
+# ah 1.12 - 24.01.21 - Monitor Mode: extend output with header info and signed float
+
+
+#ToDo:
+# - suppress retry
 
 package main;
 
@@ -63,7 +67,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.11';
+use constant HPSU_MODULEVERSION => '1.12';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -174,15 +178,6 @@ sub HPSU_Read($)
 {
   my ($hash) = @_;
   my $name = $hash->{NAME};
-  my $istate = $hash->{helper}{initstate};
-  my @init = ("AT Z",             #just reset
-              "AT E1",            #echo on
-              "AT PP 2F SV 19",   #set baud to 20k
-              "AT PP 2F ON",      #activate/save baud parameter
-              "AT SP C",          #activate protocol "C"
-              #"AT ST FF",          #set timeout to max (default is 32 -> 128ms) long enough!
-              "AT Z",             #reset and takeover settings
-              "");                #end
 
   my $data = DevIo_SimpleRead($hash);
   return if(!defined($data)); # connection lost
@@ -200,8 +195,21 @@ sub HPSU_Read($)
       my $strInit = "ELM327 v";
       my $idxInit = index($msg, $strInit);
       my $idx = -1;
-
-      HPSU_Log("HPSU ".__LINE__.": Msg: $msg State: $hash->{STATE}" ) if (AttrVal($name, "DebugLog", "off") eq "onWithMsg");
+      my $istate = $hash->{helper}{initstate};
+      my @init = ("AT Z",             #just reset
+                  "AT E1",            #echo on
+                  "AT H0",            #Header off
+                  "AT PP 2F SV 19",   #set baud to 20k
+                  "AT PP 2F ON",      #activate/save baud parameter
+                  "AT SP C",          #activate protocol "C"
+                  #"AT ST FF",          #set timeout to max (default is 32 -> 128ms) long enough!
+                  "AT Z",             #reset and takeover settings
+                  "");                #end
+                  
+      if ($hash->{helper}{MonitorMode})
+      {
+        $init[2] = "AT H1"; #Header on
+      }
 
       $idx = index($msg, $init[$istate]) if $istate > 0;
       $hash->{ELM327_Version} = substr($msg, $idxInit + length($strInit), 3) if ($idxInit > 0);
@@ -293,27 +301,27 @@ sub HPSU_Read($)
 
       ($msgSplit, $buffer) = split("\r", $buffer, 2);
       $msgSplit =~ s/ +$//; #delete whitespace
+      
+      #AT H1
+      my $Header = "";
+      ($Header, $msgSplit) = split(" ", $msgSplit, 2);      
 
       my ($name, $nicename, $out) = HPSU_CAN_ParseMsg($hash, $msgSplit);
-
-      #HPSU_Log2("HPSU ".__LINE__.": msgSplit: $msgSplit" );
       
       if ($name)
       {
-        #HPSU_Log2("HPSU ".__LINE__.": msgSplit: $msgSplit Name: $name Nicename: $nicename" );
-        readingsSingleUpdate($hash, "HPSU.$nicename", $out, 1);
+        readingsSingleUpdate($hash, "HPSU.$nicename_MsgHeader.$Header", $out, 1);
       }
       else
       {
-        my ($name1, $extended1) = HPSU_CAN_ParamToFind($hash, $msgSplit);
-        #HPSU_Log2("HPSU ".__LINE__.": name1: $name1 msgSplit: $msgSplit" ); 
+        #my ($name1, $extended1) = HPSU_CAN_ParamToFind($hash, $msgSplit);
+        my $name1 = 0;
+
         if (length($name1) < 2)
         {
           my ($rawname, $out) = HPSU_CAN_RAW_Message($hash, $msgSplit);
-          
-          #HPSU_Log2("HPSU ".__LINE__.": msgSplit: $msgSplit rawname: $rawname out: $out" );   
-          
-          readingsSingleUpdate($hash, $rawname, $out, 1) if ($rawname);
+
+          readingsSingleUpdate($hash, "$rawname_MsgHeader.$Header", $out, 1) if ($rawname);
         }
       }
     }
@@ -989,13 +997,12 @@ sub HPSU_Task($)
                 $isSame = ($aktval == $val);
               }
 
-              my $infoName = "$hash->{jcmd}->{$name}->{name} [$name]";
               if ($state eq "checkAktVal")
               {
                 if ($isSame)
                 {
                   my $sque = shift @{$hash->{helper}->{queue}};
-                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName already set to $val (".__LINE__.")", 1);
+                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: [$name] already set to $val (".__LINE__.")", 1);
                   $hash->{helper}{CANSetTries} = 0;
                 }
                 else
@@ -1008,7 +1015,7 @@ sub HPSU_Task($)
                 if ($isSame)
                 {
                   my $sque = shift @{$hash->{helper}->{queue}};
-                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName successfully set to $val (".__LINE__.")", 1);
+                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: [$name] successfully set to $val (".__LINE__.")", 1);
                   $hash->{helper}{CANSetTries} = 0;
                 }
                 else
@@ -1016,7 +1023,7 @@ sub HPSU_Task($)
                   if ($rep <= 0)
                   {
                     my $sque = shift @{$hash->{helper}->{queue}};
-                    readingsSingleUpdate($hash, "Comm.SetStatus", "Error: $infoName verify failed (".__LINE__.")", 1);
+                    readingsSingleUpdate($hash, "Comm.SetStatus", "Error: [$name] verify failed (".__LINE__.")", 1);
                     $hash->{helper}{CANSetTries} = 0;
                   }
                   else
@@ -1555,10 +1562,11 @@ sub HPSU_CAN_RAW_Message($$)
     $name = substr($CANMsg, 6, 2)."__".substr($CANMsg, 1, 1);
   }
   
-  my $out1 = HPSU_toSigned($ValByte2 + $ValByte1 * 0x0100, "");
-  my $outb = sprintf("0b%08b 0b%08b", $ValByte1, $ValByte2);
+  my $out1 = HPSU_toSigned($ValByte2 + $ValByte1 * 0x0100, "deg");
+  #my $outb = sprintf("0b%08b 0b%08b", $ValByte1, $ValByte2);
 
-  $out = "$ValByte1 - $ValByte2 - $out1 - $outb";
+  #$out = "$ValByte1 - $ValByte2 - $out1 - $outb";
+  $out = "$ValByte1 - $ValByte2 - $out1 - RAW: $CANMsg";
   
   return $name, $out;
 }
