@@ -53,7 +53,7 @@
 #                    - New reading: Info.LastDefrostDHWShrink (if mode heating)
 #                    - New attribute: SuppressRetryWarnings - to relieve logging
 #                    - New attribute: (experimental state !!) - RememberSetValues - save mode_01 val and set after module init
-# ah 1.12 - 24.01.21 - Monitor Mode: extend output with header info and signed float
+# ah 1.12 - 25.01.21 - Monitor Mode: extend output with header info and signed float
 
 
 #ToDo:
@@ -198,17 +198,17 @@ sub HPSU_Read($)
       my $istate = $hash->{helper}{initstate};
       my @init = ("AT Z",             #just reset
                   "AT E1",            #echo on
-                  "AT H0",            #Header off
                   "AT PP 2F SV 19",   #set baud to 20k
                   "AT PP 2F ON",      #activate/save baud parameter
                   "AT SP C",          #activate protocol "C"
                   #"AT ST FF",          #set timeout to max (default is 32 -> 128ms) long enough!
                   "AT Z",             #reset and takeover settings
+                  "AT H0",            #Header off
                   "");                #end
                   
       if ($hash->{helper}{MonitorMode})
       {
-        $init[2] = "AT H1"; #Header on
+        $init[6] = "AT H1"; #Header on
       }
 
       $idx = index($msg, $init[$istate]) if $istate > 0;
@@ -227,6 +227,7 @@ sub HPSU_Read($)
           DevIo_SimpleWrite($hash, "AT MA\r", 2) if ($hash->{helper}{MonitorMode});
           
           $hash->{ELMState} = "Initialized";
+          $hash->{STATE} = "opened";  # not so nice hack, but works
 
           $hash->{helper}{CANRequestPending} = -1;
           $hash->{helper}{CANAktHeaderID} = "";
@@ -239,7 +240,7 @@ sub HPSU_Read($)
             {
               my $val = ReadingsVal("$name","FHEMSET.$hash->{jcmd}->{mode_01}->{name}","NotRead");
               
-              push @{$hash->{helper}->{queue}}, $val if ($val ne "NotRead");
+              push @{$hash->{helper}->{queue}}, "mode_01;$val" if ($val ne "NotRead");
             }
           }
         }
@@ -302,6 +303,8 @@ sub HPSU_Read($)
       ($msgSplit, $buffer) = split("\r", $buffer, 2);
       $msgSplit =~ s/ +$//; #delete whitespace
       
+      HPSU_Log("HPSU ".__LINE__.": MM RAW: $msgSplit" ) if (AttrVal($name, "DebugLog", "off") eq "onWithMsg");
+      
       #AT H1
       my $Header = "";
       ($Header, $msgSplit) = split(" ", $msgSplit, 2);      
@@ -310,7 +313,7 @@ sub HPSU_Read($)
       
       if ($name)
       {
-        readingsSingleUpdate($hash, "HPSU.$nicename_MsgHeader.$Header", $out, 1);
+        readingsSingleUpdate($hash, "HPSU.$nicename"."_MsgHeader.$Header", $out, 1);
       }
       else
       {
@@ -321,7 +324,7 @@ sub HPSU_Read($)
         {
           my ($rawname, $out) = HPSU_CAN_RAW_Message($hash, $msgSplit);
 
-          readingsSingleUpdate($hash, "$rawname_MsgHeader.$Header", $out, 1) if ($rawname);
+          readingsSingleUpdate($hash, "$rawname"."_MsgHeader.$Header", $out, 1) if ($rawname);
         }
       }
     }
@@ -561,6 +564,7 @@ sub HPSU_Attr($$$$)
     #Todo: experimental state
     if ($attrName eq "RememberSetValues" and $attrValue eq "on")
     {
+      $attr{$name}{"RememberSetValues"} = "on";
       return "This attribute has experimental status!";
     }
   }
