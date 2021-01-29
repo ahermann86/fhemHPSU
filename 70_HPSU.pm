@@ -46,7 +46,7 @@
 # ah 1.10 - 07.01.21 - Force "t_frost_protect" if AntiContinousHeating is set to "on"
 #                    - if t_frost_protect_lst ne "NotRead"Force then change not "t_frost_protect"
 #                    - Min / max check corrected
-# ah 1.11 - 11.01.21 - Parse_SetGet_cmd() to find out cmd send via Set or Get argument
+# ah 1.11 - 11.01.21 - HPSU_Parse_SetGet_cmd() to find out cmd send via Set or Get argument
 #                    -         |-> https://forum.fhem.de/index.php/topic,106503.msg1119787.html#msg1119787
 #                    - Sort set an get dropdowns
 #                    - When init then cancel DHWForce (with -1)
@@ -54,6 +54,8 @@
 #                    - New attribute: SuppressRetryWarnings - to relieve logging
 #                    - New attribute: (experimental state !!) - RememberSetValues - save mode_01 val and set after module init
 # ah 1.12 - 25.01.21 - Monitor Mode: extend output with header info and signed float
+# ah b    - 29.01.21 - set request header address to 0x10D
+#                    - set response header filter address to ID who is given in request command
 
 
 #ToDo:
@@ -67,7 +69,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.12';
+use constant HPSU_MODULEVERSION => '1.12b';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -77,7 +79,7 @@ sub HPSU_Read_JSON_File($);
 sub HPSU_CAN_ParseMsg($$);
 sub HPSU_CAN_RequestOrSetMsg($$$);
 sub HPSU_CAN_RAW_Message($$);
-sub Parse_SetGet_cmd($$);
+sub HPSU_Parse_SetGet_cmd($$);
 sub HPSU_Log($); #for development
 sub HPSU_Log2($); #for development
 
@@ -140,8 +142,8 @@ sub HPSU_Define($$)
   # listen Mode
   $hash->{ELMState} = "defined";
   $hash->{helper}{initstate} = 0;
-  $hash->{helper}{CANHeaderID} = "";
-  $hash->{helper}{CANAktHeaderID} = "";
+  $hash->{helper}{CANResponseHeaderID} = "";
+  $hash->{helper}{CANAktResponseHeaderID} = "";
 
   $hash->{helper}{PARTIAL} = "";
 
@@ -203,13 +205,9 @@ sub HPSU_Read($)
                   "AT SP C",          #activate protocol "C"
                   #"AT ST FF",          #set timeout to max (default is 32 -> 128ms) long enough!
                   "AT Z",             #reset and takeover settings
-                  "AT H0",            #Header off
+                  "AT SH 10F",        #control has 0x10A - maybe 0x10F is not used
+                  ($hash->{helper}{MonitorMode})?"AT H1":"AT H0",  #Header off
                   "");                #end
-                  
-      if ($hash->{helper}{MonitorMode})
-      {
-        $init[6] = "AT H1"; #Header on
-      }
 
       $idx = index($msg, $init[$istate]) if $istate > 0;
       $hash->{ELM327_Version} = substr($msg, $idxInit + length($strInit), 3) if ($idxInit > 0);
@@ -224,13 +222,20 @@ sub HPSU_Read($)
         }
         else
         {
-          DevIo_SimpleWrite($hash, "AT MA\r", 2) if ($hash->{helper}{MonitorMode});
+          if ($hash->{helper}{MonitorMode})
+          {
+            DevIo_SimpleWrite($hash, "AT MA\r", 2);
           
-          $hash->{ELMState} = "Initialized";
+            $hash->{ELMState} = "Monitor mode active";
+          }
+          else
+          {
+            $hash->{ELMState} = "Initialized"; #normal operation
+          }
           $hash->{STATE} = "opened";  # not so nice hack, but works
 
           $hash->{helper}{CANRequestPending} = -1;
-          $hash->{helper}{CANAktHeaderID} = "";
+          $hash->{helper}{CANAktResponseHeaderID} = "";
           if (not $hash->{helper}{MonitorMode})
           {
             HPSU_Task($hash);
@@ -249,12 +254,12 @@ sub HPSU_Read($)
     }
     elsif ($hash->{ELMState} eq "Initialized")
     {
-      if ($hash->{helper}{CANAktHeaderID} ne $hash->{helper}{CANHeaderID})
+      if ($hash->{helper}{CANAktResponseHeaderID} ne $hash->{helper}{CANResponseHeaderID})
       {
         my $idx = index($msg, "OK\r");
         if ($idx)
         {
-          $hash->{helper}{CANAktHeaderID} = $hash->{helper}{CANHeaderID};
+          $hash->{helper}{CANAktResponseHeaderID} = $hash->{helper}{CANResponseHeaderID};
           DevIo_SimpleWrite($hash, $hash->{helper}{firstCommand}."\r", 2);
         }
         $hash->{helper}{firstCommand} = undef;        
@@ -284,8 +289,7 @@ sub HPSU_Read($)
             }
           }
           if (defined $hash->{helper}{CANRequestName} 
-              and $hash->{helper}{CANRequestName} eq "NO DATA"
-              and $hash->{helper}{CANHeaderID} eq "680")
+              and $hash->{helper}{CANRequestName} eq "NO DATA")
           {
             $hash->{helper}{CANRequestPending} = 0;
           }
@@ -294,7 +298,7 @@ sub HPSU_Read($)
     }
   }
   
-  if ($hash->{helper}{MonitorMode} and $hash->{ELMState} eq "Initialized")
+  if ($hash->{helper}{MonitorMode} and $hash->{ELMState} eq "Monitor mode active")
   {
     while($buffer =~ m/\r/)
     {
@@ -310,22 +314,15 @@ sub HPSU_Read($)
       ($Header, $msgSplit) = split(" ", $msgSplit, 2);      
 
       my ($name, $nicename, $out) = HPSU_CAN_ParseMsg($hash, $msgSplit);
+      my ($rawName, $rawOut) = HPSU_CAN_RAW_Message($hash, $msgSplit);
       
       if ($name)
       {
-        readingsSingleUpdate($hash, "HPSU.$nicename"."_MsgHeader.$Header", $out, 1);
+        readingsSingleUpdate($hash, "HPSU.$nicename"."_MsgHeader.$Header", $out." : ".$rawOut, 1);
       }
       else
       {
-        #my ($name1, $extended1) = HPSU_CAN_ParamToFind($hash, $msgSplit);
-        my $name1 = 0;
-
-        if (length($name1) < 2)
-        {
-          my ($rawname, $out) = HPSU_CAN_RAW_Message($hash, $msgSplit);
-
-          readingsSingleUpdate($hash, "$rawname"."_MsgHeader.$Header", $out, 1) if ($rawname);
-        }
+        readingsSingleUpdate($hash, "$rawName"."_MsgHeader.$Header", $rawOut, 1) if ($rawName);
       }
     }
   }
@@ -338,10 +335,11 @@ sub HPSU_Set($@)
   my ($hash, $name, $cmd, @args ) = @_;
   my $cmdList = join(" ", map {"$_:$HPSU_sets{$_}"} keys %HPSU_sets);
   my $jcmd = $hash->{jcmd};
+  my $hpsuNameCmd = "";
 
   return "\"set $name\" needs at least one argument" unless(defined($cmd));
 
-  my $hpsuNameCmd = Parse_SetGet_cmd($hash, $cmd);
+  $hpsuNameCmd = HPSU_Parse_SetGet_cmd($hash, $cmd);
 
   return "\"set $name\" needs a setable value" if ($jcmd->{$hpsuNameCmd} and not exists $args[0]);
 
@@ -360,8 +358,8 @@ sub HPSU_Set($@)
   }
   elsif($cmd eq "Connect_MonitorMode")
   {
-    $hash->{helper}{CANHeaderID} = "";
-    $hash->{helper}{CANAktHeaderID} = "";
+    $hash->{helper}{CANResponseHeaderID} = "";
+    $hash->{helper}{CANAktResponseHeaderID} = "";
 
     $hash->{helper}{MonitorMode} = 1;
     DevIo_OpenDev($hash, 0, "HPSU_Init");
@@ -476,7 +474,7 @@ sub HPSU_Get($$@)
     return "Monitor mode active.. get values manually disabled!" if ($hash->{helper}{MonitorMode});
   
     #find [xxx] (i.e. "Aktive_Betriebsart_[mode]" -> mode)
-    my $hpsuNameCmd = Parse_SetGet_cmd($hash, $args[0]);
+    my $hpsuNameCmd = HPSU_Parse_SetGet_cmd($hash, $args[0]);
 
     if ($hpsuNameCmd)
     {
@@ -582,6 +580,7 @@ sub HPSU_Disconnect($)
   $hash->{helper}{MonitorMode} = undef;
   RemoveInternalTimer($hash);
   sleep(0.3);  ##wait if pending commands...
+  DevIo_SimpleWrite($hash, "\r", 2);
 
   # close the connection
   DevIo_CloseDev($hash);
@@ -1174,16 +1173,11 @@ sub HPSU_CAN_RequestReadings($$$)
   my $jcmd = $hash->{jcmd};
   my ($CANMsg) = HPSU_CAN_RequestOrSetMsg($hash, $hpsuNameCmd, $setVal);
 
-  if (defined $setVal)
-  {
-    $hash->{helper}{CANHeaderID} = "680";
-  }
-  else
-  {
-    $hash->{helper}{CANHeaderID} = $jcmd->{$hpsuNameCmd}->{id};
-  }
-
+  #get res id:
+  #example 61 00 05 00 00 00 00  ->  6 = 0x06 * 0x80 = 0x300
+  $hash->{helper}{CANResponseHeaderID} = sprintf("%X", hex(substr($CANMsg, 0, 1)) * 0x80);
   $hash->{helper}{CANRequestPending} = gettimeofday();
+  
   if (defined $setVal)
   {
     $hash->{helper}{CANRequestName} = "NO DATA";
@@ -1192,9 +1186,10 @@ sub HPSU_CAN_RequestReadings($$$)
   {
     $hash->{helper}{CANRequestName} = $hpsuNameCmd;
   }
-  if ($hash->{helper}{CANAktHeaderID} ne $hash->{helper}{CANHeaderID})
+  
+  if ($hash->{helper}{CANAktResponseHeaderID} ne $hash->{helper}{CANResponseHeaderID})
   {
-    DevIo_SimpleWrite($hash, "AT SH $hash->{helper}{CANHeaderID}\r", 2);
+    DevIo_SimpleWrite($hash, "AT CRA $hash->{helper}{CANResponseHeaderID}\r", 2);
     $hash->{helper}{firstCommand} = $CANMsg;
   }
   else
@@ -1567,15 +1562,13 @@ sub HPSU_CAN_RAW_Message($$)
   }
   
   my $out1 = HPSU_toSigned($ValByte2 + $ValByte1 * 0x0100, "deg");
-  #my $outb = sprintf("0b%08b 0b%08b", $ValByte1, $ValByte2);
 
-  #$out = "$ValByte1 - $ValByte2 - $out1 - $outb";
   $out = "$ValByte1 - $ValByte2 - $out1 - RAW: $CANMsg";
   
   return $name, $out;
 }
 
-sub Parse_SetGet_cmd($$)
+sub HPSU_Parse_SetGet_cmd($$)
 {
   my ($hash, $in) = @_;
   my $jcmd = $hash->{jcmd};
