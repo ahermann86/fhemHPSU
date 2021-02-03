@@ -54,9 +54,11 @@
 #                    - New attribute: SuppressRetryWarnings - to relieve logging
 #                    - New attribute: (experimental state !!) - RememberSetValues - save mode_01 val and set after module init
 # ah 1.12 - 25.01.21 - Monitor Mode: extend output with header info and signed float
-# ah b    - 29.01.21 - set request header address to 0x10D
-#                    - set response header filter address to ID who is given in request command
-
+#           03.02.21 - New reading: Info.Ts - temperature spread
+#                    - Added support for Rotex HPSU ULTRA -> https://forum.fhem.de/index.php/topic,106503.msg1128547.html#msg1128547
+#                    - Initialize the ELM to only send as many bytes as specified - no padding to 8 bytes!
+#                    - Request with header 0x10F and calculated response filter from command
+#                    - Set value with header 0x10A
 
 #ToDo:
 # - suppress retry
@@ -69,7 +71,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.12b';
+use constant HPSU_MODULEVERSION => '1.12c';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -81,7 +83,6 @@ sub HPSU_CAN_RequestOrSetMsg($$$);
 sub HPSU_CAN_RAW_Message($$);
 sub HPSU_Parse_SetGet_cmd($$);
 sub HPSU_Log($); #for development
-sub HPSU_Log2($); #for development
 
 my %HPSU_sets =
 (
@@ -142,8 +143,11 @@ sub HPSU_Define($$)
   # listen Mode
   $hash->{ELMState} = "defined";
   $hash->{helper}{initstate} = 0;
+  $hash->{helper}{CANRequestHeaderID} = "";
+  $hash->{helper}{CANAktRequestHeaderID} = "";
   $hash->{helper}{CANResponseHeaderID} = "";
   $hash->{helper}{CANAktResponseHeaderID} = "";
+  @{$hash->{helper}{WriteQueue}} = ();
 
   $hash->{helper}{PARTIAL} = "";
 
@@ -203,9 +207,8 @@ sub HPSU_Read($)
                   "AT PP 2F SV 19",   #set baud to 20k
                   "AT PP 2F ON",      #activate/save baud parameter
                   "AT SP C",          #activate protocol "C"
-                  #"AT ST FF",          #set timeout to max (default is 32 -> 128ms) long enough!
                   "AT Z",             #reset and takeover settings
-                  "AT SH 10F",        #control has 0x10A - maybe 0x10F is not used
+                  "AT V1",            #Send only as many bytes as given - no padding!
                   ($hash->{helper}{MonitorMode})?"AT H1":"AT H0",  #Header off
                   "");                #end
 
@@ -235,7 +238,9 @@ sub HPSU_Read($)
           $hash->{STATE} = "opened";  # not so nice hack, but works
 
           $hash->{helper}{CANRequestPending} = -1;
+          $hash->{helper}{CANAktRequestHeaderID} = "";
           $hash->{helper}{CANAktResponseHeaderID} = "";
+          @{$hash->{helper}{WriteQueue}} = ();
           if (not $hash->{helper}{MonitorMode})
           {
             HPSU_Task($hash);
@@ -254,15 +259,27 @@ sub HPSU_Read($)
     }
     elsif ($hash->{ELMState} eq "Initialized")
     {
-      if ($hash->{helper}{CANAktResponseHeaderID} ne $hash->{helper}{CANResponseHeaderID})
+      my $ELMerr = index($msg, "?\r");
+      my $ELMok = index($msg, "OK\r");
+      
+      if ($ELMerr >= 0)
       {
-        my $idx = index($msg, "OK\r");
-        if ($idx)
+        $hash->{helper}{CANAktRequestHeaderID} = "";
+        $hash->{helper}{CANAktResponseHeaderID} = "";
+        $hash->{helper}{CANRequestPending} = 0;
+      }
+      elsif ($ELMok >= 0)
+      {
+        if (@{$hash->{helper}{WriteQueue}})
         {
-          $hash->{helper}{CANAktResponseHeaderID} = $hash->{helper}{CANResponseHeaderID};
-          DevIo_SimpleWrite($hash, $hash->{helper}{firstCommand}."\r", 2);
+          my $sque = shift @{$hash->{helper}{WriteQueue}};
+          
+          DevIo_SimpleWrite($hash, $sque."\r", 2);
         }
-        $hash->{helper}{firstCommand} = undef;        
+        else
+        {
+          $hash->{helper}{CANRequestPending} = 0;
+        }
       }
       else
       {
@@ -358,12 +375,14 @@ sub HPSU_Set($@)
   }
   elsif($cmd eq "Connect_MonitorMode")
   {
+    $hash->{helper}{CANRequestHeaderID} = "";
+    $hash->{helper}{CANAktRequestHeaderID} = "";
     $hash->{helper}{CANResponseHeaderID} = "";
     $hash->{helper}{CANAktResponseHeaderID} = "";
+    @{$hash->{helper}{WriteQueue}} = ();
 
     $hash->{helper}{MonitorMode} = 1;
     DevIo_OpenDev($hash, 0, "HPSU_Init");
-    HPSU_Log2("HPSU ".__LINE__.": Monitor Init" );
   }
   elsif($cmd eq "Disconnect")
   {
@@ -1085,9 +1104,9 @@ sub HPSU_Task($)
     $hash->{helper}{CANRequestPending} = 0;
   }
 
-  ### Calculate Akt Q
+  ### Calculate Akt Q and temperature spread
   my $AktQ = 0;
-  my $OldQ = ReadingsNum("$name","Info.Q",-100);
+  my $AktTs = 0;
   my $t_hs = ReadingsNum("$name","HPSU.$hash->{jcmd}->{t_hs}->{name}",-100);
   my $t_r1 = ReadingsNum("$name","HPSU.$hash->{jcmd}->{t_r1}->{name}",-100);
   my $flow_rate = ReadingsNum("$name","HPSU.$hash->{jcmd}->{flow_rate}->{name}",-100);
@@ -1102,8 +1121,12 @@ sub HPSU_Task($)
     #Q = m * c * delta t
     $AktQ = ( ($t_hs-$t_r1) * 4.19 * $flow_rate) / 3600;
     $AktQ = sprintf("%.03f", $AktQ);
+    $AktTs = $t_hs-$t_r1;
   }
-  readingsSingleUpdate($hash, "Info.Q", "$AktQ kW", 1) if ($OldQ != $AktQ);
+  readingsBeginUpdate($hash);
+  readingsBulkUpdateIfChanged($hash, "Info.Q", "$AktQ kW");
+  readingsBulkUpdateIfChanged($hash, "Info.Ts", "$AktTs °C");
+  readingsEndUpdate($hash, 1);
 
   ### evaluation heating error: cyclic operation
   $hash->{helper}->{TStandby} = gettimeofday() if (not exists ($hash->{helper}->{TStandby}));
@@ -1174,23 +1197,37 @@ sub HPSU_CAN_RequestReadings($$$)
   my ($CANMsg) = HPSU_CAN_RequestOrSetMsg($hash, $hpsuNameCmd, $setVal);
 
   #get res id:
-  #example 61 00 05 00 00 00 00  ->  6 = 0x06 * 0x80 = 0x300
-  $hash->{helper}{CANResponseHeaderID} = sprintf("%X", hex(substr($CANMsg, 0, 1)) * 0x80);
+  #example 61 00 05 00 00 00 00  ->  0x60 = 0x06 * 0x10 * 0x08 = 0x300
+  $hash->{helper}{CANResponseHeaderID} = sprintf("%X", hex(substr($CANMsg, 0, 1)) * 0x10 * 0x08);
   $hash->{helper}{CANRequestPending} = gettimeofday();
   
   if (defined $setVal)
   {
+    $hash->{helper}{CANRequestHeaderID} = "10A"; #control/display has 0x10A - just for setting a value
     $hash->{helper}{CANRequestName} = "NO DATA";
   }
   else
   {
+    $hash->{helper}{CANRequestHeaderID} = "10F"; #0x10F is not used - we don't want to disturb the control unit
     $hash->{helper}{CANRequestName} = $hpsuNameCmd;
   }
   
-  if ($hash->{helper}{CANAktResponseHeaderID} ne $hash->{helper}{CANResponseHeaderID})
+  my $ReqHdDiff = $hash->{helper}{CANAktRequestHeaderID} ne $hash->{helper}{CANRequestHeaderID};
+  my $ResHdDiff = $hash->{helper}{CANAktResponseHeaderID} ne $hash->{helper}{CANResponseHeaderID};
+  
+  if ($ReqHdDiff or $ResHdDiff)
   {
-    DevIo_SimpleWrite($hash, "AT CRA $hash->{helper}{CANResponseHeaderID}\r", 2);
-    $hash->{helper}{firstCommand} = $CANMsg;
+    @{$hash->{helper}{WriteQueue}} = ();
+    
+    $hash->{helper}{CANAktRequestHeaderID} = $hash->{helper}{CANRequestHeaderID};
+    $hash->{helper}{CANAktResponseHeaderID} = $hash->{helper}{CANResponseHeaderID};
+    
+    push @{$hash->{helper}{WriteQueue}}, "AT SH $hash->{helper}{CANRequestHeaderID}"   if ($ReqHdDiff);
+    push @{$hash->{helper}{WriteQueue}}, "AT CRA $hash->{helper}{CANResponseHeaderID}" if ($ResHdDiff);
+    push @{$hash->{helper}{WriteQueue}}, $CANMsg;
+    
+    my $sque = shift @{$hash->{helper}{WriteQueue}};
+    DevIo_SimpleWrite($hash, $sque."\r", 2);
   }
   else
   {
@@ -1426,7 +1463,7 @@ sub HPSU_CAN_RequestOrSetMsg($$$)
   my ($hash, $name, $value) = @_;
   my $jcmd = $hash->{jcmd};
   my $CANMsg = undef;
-  my $CANPattern = "00 00 00 00 00 00 00";
+  my $CANPattern = "00 00 00 00 00 00 00";  #needed because of V0 (no padding)
   my @value_code = ();
   my $len = 0;
 
@@ -1624,22 +1661,6 @@ sub HPSU_Log($)
   my $cwd = getcwd();
 
   open($fh, ">>:encoding(UTF-8)",  "$cwd/FHEM/70_HPSU_Log.log") || return undef;
-  $strout =~ s/\r/<\\r>/g;
-  $strout =~ s/\n/<\\n>/g;
-  print $fh HPSU_getLoggingTime().": ".$strout."\n";
-  close($fh);
-
-  return undef;
-}
-
-sub HPSU_Log2($)
-{
-  my ($str) = @_;
-  my $strout = $str;
-  my $fh = undef;
-  my $cwd = getcwd();
-
-  open($fh, ">>:encoding(UTF-8)",  "$cwd/FHEM/70_HPSU_Log20.log") || return undef;
   $strout =~ s/\r/<\\r>/g;
   $strout =~ s/\n/<\\n>/g;
   print $fh HPSU_getLoggingTime().": ".$strout."\n";
