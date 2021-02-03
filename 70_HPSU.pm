@@ -46,19 +46,22 @@
 # ah 1.10 - 07.01.21 - Force "t_frost_protect" if AntiContinousHeating is set to "on"
 #                    - if t_frost_protect_lst ne "NotRead"Force then change not "t_frost_protect"
 #                    - Min / max check corrected
-# ah 1.11 - 11.01.21 - HPSU_Parse_SetGet_cmd() to find out cmd send via Set or Get argument
+# ah 1.11 - 14.01.21 - Parse_SetGet_cmd() to find out cmd send via Set or Get argument
 #                    -         |-> https://forum.fhem.de/index.php/topic,106503.msg1119787.html#msg1119787
 #                    - Sort set an get dropdowns
 #                    - When init then cancel DHWForce (with -1)
 #                    - New reading: Info.LastDefrostDHWShrink (if mode heating)
 #                    - New attribute: SuppressRetryWarnings - to relieve logging
 #                    - New attribute: (experimental state !!) - RememberSetValues - save mode_01 val and set after module init
-# ah 1.12 - 25.01.21 - Monitor Mode: extend output with header info and signed float
+#                    - "Infoname" if val set
+# ah 1.12 - 25.01.21 - Parse_SetGet_cmd() renamed to HPSU_Parse_SetGet_cmd()
+#                    - Monitor Mode: extend output with header info and signed float
 #           03.02.21 - New reading: Info.Ts - temperature spread
 #                    - Added support for Rotex HPSU ULTRA -> https://forum.fhem.de/index.php/topic,106503.msg1128547.html#msg1128547
 #                    - Initialize the ELM to only send as many bytes as specified - no padding to 8 bytes!
 #                    - Request with header 0x10F and calculated response filter from command
 #                    - Set value with header 0x10A
+#                    - RememberSetValues tested and fixed
 
 #ToDo:
 # - suppress retry
@@ -245,7 +248,6 @@ sub HPSU_Read($)
           {
             HPSU_Task($hash);
             
-            #Todo: experimental state
             if (AttrVal($name, "RememberSetValues", "off") eq "on")
             {
               my $val = ReadingsVal("$name","FHEMSET.$hash->{jcmd}->{mode_01}->{name}","NotRead");
@@ -399,7 +401,6 @@ sub HPSU_Set($@)
     return "Monitor mode active.. set values disabled!" if ($hash->{helper}{MonitorMode});
     return "$hpsuNameCmd not writable" if ($jcmd->{$hpsuNameCmd}->{writable} ne "true");
 
-    #Todo: experimental state
     if (AttrVal($name, "RememberSetValues", "off") eq "on")
     {
       if ($hpsuNameCmd eq "mode_01")
@@ -576,14 +577,7 @@ sub HPSU_Attr($$$$)
         push @{$hash->{helper}->{queue}}, "t_frost_protect";
         return "At least JSON version 3.6 is required for $attrName attribute!";
       }
-    }
-    
-    #Todo: experimental state
-    if ($attrName eq "RememberSetValues" and $attrValue eq "on")
-    {
-      $attr{$name}{"RememberSetValues"} = "on";
-      return "This attribute has experimental status!";
-    }
+    }    
   }
 
   return undef;
@@ -1019,12 +1013,13 @@ sub HPSU_Task($)
                 $isSame = ($aktval == $val);
               }
 
+              my $infoName = "$hash->{jcmd}->{$name}->{name} [$name]";
               if ($state eq "checkAktVal")
               {
                 if ($isSame)
                 {
                   my $sque = shift @{$hash->{helper}->{queue}};
-                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: [$name] already set to $val (".__LINE__.")", 1);
+                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName already set to $val (".__LINE__.")", 1);
                   $hash->{helper}{CANSetTries} = 0;
                 }
                 else
@@ -1037,7 +1032,7 @@ sub HPSU_Task($)
                 if ($isSame)
                 {
                   my $sque = shift @{$hash->{helper}->{queue}};
-                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: [$name] successfully set to $val (".__LINE__.")", 1);
+                  readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName successfully set to $val (".__LINE__.")", 1);
                   $hash->{helper}{CANSetTries} = 0;
                 }
                 else
@@ -1045,7 +1040,7 @@ sub HPSU_Task($)
                   if ($rep <= 0)
                   {
                     my $sque = shift @{$hash->{helper}->{queue}};
-                    readingsSingleUpdate($hash, "Comm.SetStatus", "Error: [$name] verify failed (".__LINE__.")", 1);
+                    readingsSingleUpdate($hash, "Comm.SetStatus", "Error: $infoName verify failed (".__LINE__.")", 1);
                     $hash->{helper}{CANSetTries} = 0;
                   }
                   else
