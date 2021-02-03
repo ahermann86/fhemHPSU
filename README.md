@@ -64,3 +64,8 @@ Changelog:
 - Sender Header auf 0x10F setzen
 - Empfänger Header Filter auf die in der ersten Stelle des CAN Kommandos codierten setzen.
 - ACHTUNG: Schreiben von Werten funktioniert (noch) nicht!!
+
+1.12c # 03.02.21
+- Neues Reading für Temperaturspreizung: Info.Ts
+- Messages sind nun immer 7 bytes lang und werden nicht auf 8 bytes erweitert
+- Sender Header beim setzten eines Wertes auf 0x10A setzen. Damit simuliert man die Bedieneinheit
