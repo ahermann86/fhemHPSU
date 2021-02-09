@@ -62,6 +62,8 @@
 #                    - Request with header 0x10F and calculated response filter from command
 #                    - Set value with header 0x10A
 #                    - RememberSetValues tested and fixed
+#           09.02.21 - Change request header adresses
+#                    - Reformat Info.LastDefrostDHWShrink
 
 #ToDo:
 # - suppress retry
@@ -74,7 +76,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.12c';
+use constant HPSU_MODULEVERSION => '1.12f';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -926,6 +928,7 @@ sub HPSU_Task($)
         if (not $timeout)
         {
           my $val = $hash->{helper}->{DefrostDHWStart} - ReadingsNum("$name","HPSU.$hash->{jcmd}->{t_dhw}->{name}",48);
+          $val = sprintf("%.02f", $val);
           readingsSingleUpdate($hash, "Info.LastDefrostDHWShrink", "$val °C", 1);
         }      
         $hash->{helper}{DefrostStateTime} = 0;
@@ -1207,6 +1210,8 @@ sub HPSU_CAN_RequestReadings($$$)
     $hash->{helper}{CANRequestName} = $hpsuNameCmd;
   }
   
+  $hash->{helper}{CANRequestHeaderID} = "680";  #  <<- Falls die Kommunikation nicht funktioniert, diese Zeile loeschen...
+
   my $ReqHdDiff = $hash->{helper}{CANAktRequestHeaderID} ne $hash->{helper}{CANRequestHeaderID};
   my $ResHdDiff = $hash->{helper}{CANAktResponseHeaderID} ne $hash->{helper}{CANResponseHeaderID};
   
