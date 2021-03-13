@@ -1,10 +1,10 @@
 {
-	"version" : "3.6",
+	"version" : "3.7",
 	"commands":{
 		"t_hs" : { 
 			"name" : "Vorlauftemperatur_Waermeerzeuger", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 D6 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -13,8 +13,8 @@
 		},
 		"t_hs_set" : { 
 			"name" : "Soll_Vorlauftemperatur_Waermeerzeuger", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 02 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 30,
@@ -23,8 +23,8 @@
 		},
 		"water_pressure" : { 
 			"name" : "Wasserdruck", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 1C 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "1000", 
 			"writable" : "false", 
 			"FHEMPollTime" : 600,
@@ -33,8 +33,8 @@
 		},
 		"t_ext" : { 
 			"name" : "T_Aussen_gemittelt", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0A 0C 00 00", 
-			"id" : "310", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 120,
@@ -43,8 +43,8 @@
 		},
 		"t_dhw" : { 
 			"name" : "T_Warmwasser", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 0E 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 60,
@@ -53,8 +53,8 @@
 		},
 		"t_dhw_set" : { 
 			"name" : "Soll_T_Warmwasser", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 03 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 60,
@@ -63,8 +63,8 @@
 		},
 		"t_return" : { 
 			"name" : "t_return", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 16 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -73,8 +73,8 @@
 		},
 		"flow_rate" : { 
 			"name" : "Durchfluss", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 DA 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -83,8 +83,8 @@
 		},
 		"t_hc" : { 
 			"name" : "T_direkter_Heizkreis",
+			"system" : "comfort|ultra",
 			"command" : "C1 00 0F 00 00 00 00", 
-			"id" : "610", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -93,8 +93,8 @@
 		},
 		"t_hc_set" : { 
 			"name" : "Soll_T_direkter_Heizkreis", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 04 00 00 00 00", 
-			"id" : "310", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 30,
@@ -103,8 +103,8 @@
 		},
 		"status_pump" : { 
 			"name" : "Direkter_Heizkreis_Modus", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 0A 8C 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 30,
@@ -117,8 +117,8 @@
 		},
 		"runtime_comp" : { 
 			"name" : "Laufzeit_Kompressor",
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 A5 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -127,8 +127,8 @@
 		},
 		"runtime_pump" : { 
 			"name" : "Laufzeit_UWPumpe", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 A4 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -137,8 +137,8 @@
 		},
 		"posmix" : { 
 			"name" : "Pos_Vent_3UV_DHW", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 9B 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -147,8 +147,8 @@
 		},
 		"qboh" : { 
 			"name" : "EHS_fuer_WW", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 1C 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -157,8 +157,8 @@
 		},
 		"qchhp" : { 
 			"name" : "EHS_fuer_Heizung", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 20 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -167,8 +167,8 @@
 		},
 		"qsc" : { 
 			"name" : "Energie_Kuehlung", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 A6 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -177,8 +177,8 @@
 		},
 		"qch" : { 
 			"name" : "Energie_Heizung", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 A7 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -187,8 +187,8 @@
 		},
 		"qwp" : { 
 			"name" : "Energie_erzeugt_gesamt", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 30 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -197,8 +197,8 @@
 		},
 		"qdhw" : { 
 			"name" : "Energie_WW", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 2C 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 300,
@@ -207,8 +207,8 @@
 		},
 		"sw_vers_01" : { 
 			"name" : "sw_vers_01", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 99 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -217,8 +217,8 @@
 		},
 		"sw_vers_02" : { 
 			"name" : "sw_vers_02", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 B4 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -227,8 +227,8 @@
 		},
 		"sw_vers_03" : { 
 			"name" : "sw_vers_03", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 02 4B 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -237,8 +237,8 @@
 		},
 		"mode_01" : { 
 			"name" : "Betriebsart", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 12 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true",
 			"FHEMControl" : "value_code",
@@ -257,8 +257,8 @@
 		},
 		"tvbh2" : { 
 			"name" : "TVBH", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 02", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 30,
@@ -267,8 +267,8 @@
 		},
 		"tliq2" : { 
 			"name" : "Kaeltemitteltemperatur", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 03", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -277,8 +277,8 @@
 		},
 		"tr2" : { 
 			"name" : "Ruecklauftemperatur", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 04", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -287,8 +287,8 @@
 		},
 		"ta2" : { 
 			"name" : "T_Aussen_WP", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 05", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 60,
@@ -297,8 +297,8 @@
 		},
 		"tdhw2" : { 
 			"name" : "tdhw2", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 06", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -307,8 +307,8 @@
 		},
 		"quiet" : { 
 			"name" : "quiet", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 07", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -322,8 +322,8 @@
 		},
 		"mode" : { 
 			"name" : "Aktive_Betriebsart", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 F6", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 5,
@@ -339,8 +339,8 @@
 		},
 		"pump" : { 
 			"name" : "UWPumpe", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 F7", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -349,8 +349,8 @@
 		},
 		"ext" : { 
 			"name" : "ext", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 F8", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -359,8 +359,8 @@
 		},
 		"ehs" : { 
 			"name" : "ehs", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 F9", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 5,
@@ -369,8 +369,8 @@
 		},
 		"rt" : { 
 			"name" : "rt", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FA", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -379,8 +379,8 @@
 		},
 		"bpv" : { 
 			"name" : "Pos_Vent_3UVB1", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FB", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -389,8 +389,8 @@
 		},
 		"t_v1" : { 
 			"name" : "t_v1", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FC", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -399,8 +399,8 @@
 		},
 		"t_dhw1" : { 
 			"name" : "t_dhw1", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FD", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -409,8 +409,8 @@
 		},
 		"t_vbh" : { 
 			"name" : "t_vbh", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FE", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -419,8 +419,8 @@
 		},
 		"t_outdoor_ot1" : { 
 			"name" : "T_Aussen", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FF", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 60,
@@ -429,8 +429,8 @@
 		},
 		"t_r1" : { 
 			"name" : "Heizung_Ruecklauf", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 10,
@@ -439,8 +439,8 @@
 		},
 		"v1" : { 
 			"name" : "v1", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA C1 01", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -449,8 +449,8 @@
 		},
 		"t_room1_setpoint" : { 
 			"name" : "Soll_T_Raum_1", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 05 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,5,0.5,40,1",
@@ -460,8 +460,8 @@
 		},
 		"t_room2_setpoint" : { 
 			"name" : "Soll_T_Raum_2", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 06 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,5,0.5,40,1",
@@ -471,8 +471,8 @@
 		},
 		"t_room3_setpoint" : { 
 			"name" : "Soll_T_Raum_3", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 07 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,5,0.5,40,1",
@@ -482,8 +482,8 @@
 		},
 		"heat_slope" : { 
 			"name" : "Heizkurve", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 0E 00 00", 
-			"id" : "190", 
 			"divisor" : "100", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,0,0.1,3,1",
@@ -493,8 +493,8 @@
 		},
 		"t_dhw_setpoint1" : { 
 			"name" : "Soll_T_Warmwasser_1",
+			"system" : "comfort|ultra",
 			"command" : "31 00 13 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,35,1,70",
@@ -504,8 +504,8 @@
 		},
 		"t_dhw_setpoint2" : { 
 			"name" : "Soll_T_Warmwasser_2", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 0A 06 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,35,1,70",
@@ -515,8 +515,8 @@
 		},
 		"t_dhw_setpoint3" : { 
 			"name" : "Soll_T_Warmwasser_3", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 3E 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,35,1,70",
@@ -526,8 +526,8 @@
 		},
 		"hyst_hp" : { 
 			"name" : "hyst_hp", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 91 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -537,8 +537,8 @@
 		},
 		"error" : { 
 			"name" : "error", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 88 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -547,8 +547,8 @@
 		},
 		"outdoor_type" : { 
 			"name" : "Aussengeraet", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 9A 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMControl" : "value_code",
@@ -567,8 +567,8 @@
 		},
 		"indoor_unit" : { 
 			"name" : "Innengeraet", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 99 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMControl" : "value_code",
@@ -585,8 +585,8 @@
 		},
 		"func_heating" : { 
 			"name" : "Funktion_EHS", 
+			"system" : "comfort|ultra",
 			"command" : "A1 00 FA 06 D2 00 00", 
-			"id" : "510", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,0,1,3",
@@ -596,8 +596,8 @@
 		},
 		"hzu" : { 
 			"name" : "HZ_Unterstuetzung", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 6C 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "value_code",
@@ -611,8 +611,8 @@
 		},
 		"equi_func" : { 
 			"name" : "Bivalenzfunktion", 
+			"system" : "comfort|ultra",
 			"command" : "A1 00 FA 06 D3 00 00", 
-			"id" : "510", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "value_code",
@@ -626,8 +626,8 @@
 		},
 		"smart_grid" : { 
 			"name" : "smart_grid", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 93 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -641,8 +641,8 @@
 		},
 		"modus_sg" : { 
 			"name" : "modus_sg", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 94 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -657,8 +657,8 @@
 		},
 		"ht_nt_func" : { 
 			"name" : "ht_nt_func", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 6F 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -674,8 +674,8 @@
 		},
 		"ht_nt_contact" : { 
 			"name" : "ht_nt_contact", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 70 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -688,15 +688,15 @@
 			}
 		},
 		"room_therm" : { 
-			"name" : "room_therm", 
+			"name" : "Raumthermostat", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 78 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
-			"FHEMControl" : "disabled",
-			"FHEMPollTime" : 0,
+			"FHEMControl" : "value_code",
+			"FHEMPollTime" : 60,
 			"unit" : "",
-			"type" : "value",
+			"type" : "longint",
 			"value_code" : {
 				"0" : "off",
 				"1" : "on"
@@ -704,8 +704,8 @@
 		},
 		"interlink" : { 
 			"name" : "interlink", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 79 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -719,8 +719,8 @@
 		},
 		"air_purge" : { 
 			"name" : "air_purge", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 95 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -734,8 +734,8 @@
 		},
 		"max_perf_pump" : { 
 			"name" : "Max_Leistung_Pumpe", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 7E 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,100",
@@ -745,8 +745,8 @@
 		},
 		"min_perf_pump" : { 
 			"name" : "Min_Leistung_Pumpe", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 7F 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,10,1,100",
@@ -756,8 +756,8 @@
 		},
 		"outside_conf" : { 
 			"name" : "outside_conf", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 61 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -771,8 +771,8 @@
 		},
 		"storage_conf" : { 
 			"name" : "storage_conf", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 61 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -787,8 +787,8 @@
 		},
 		"pres_conf" : { 
 			"name" : "pres_conf", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 09 61 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -802,8 +802,8 @@
 		},
 		"out_temp_adapt" : { 
 			"name" : "out_temp_adapt", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0C 1F 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -813,8 +813,8 @@
 		},
 		"power_dhw" : { 
 			"name" : "power_dhw", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 68 00 00", 
-			"id" : "190", 
 			"divisor" : "0.1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -824,8 +824,8 @@
 		},
 		"buh_s1_pow" : { 
 			"name" : "buh_s1_pow", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 69 00 00", 
-			"id" : "190", 
 			"divisor" : "0.1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -835,8 +835,8 @@
 		},
 		"buh_s2_pow" : { 
 			"name" : "buh_s2_pow", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 6A 00 00", 
-			"id" : "190", 
 			"divisor" : "0.1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -846,8 +846,8 @@
 		},
 		"power_biv" : { 
 			"name" : "power_biv", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 6B 00 00", 
-			"id" : "190", 
 			"divisor" : "0.1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -857,8 +857,8 @@
 		},
 		"tdiff_dhw_ch" : { 
 			"name" : "TDiff_WW_HZU", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 6D 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,2,1,15",
@@ -868,8 +868,8 @@
 		},
 		"t_vbh1_max" : { 
 			"name" : "t_vbh1_max", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 6E 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -879,8 +879,8 @@
 		},
 		"equi_temp" : { 
 			"name" : "equi_temp", 
+			"system" : "comfort|ultra",
 			"command" : "A1 00 FA 06 D4 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -890,8 +890,8 @@
 		},
 		"quiet_mode" : { 
 			"name" : "Fluesterbetrieb", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 96 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true",
 			"FHEMControl" : "value_code",
@@ -906,8 +906,8 @@
 		},
 		"aux_fct" : { 
 			"name" : "aux_fct", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 71 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -917,8 +917,8 @@
 		},
 		"aux_time" : { 
 			"name" : "aux_time", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 72 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -928,8 +928,8 @@
 		},
 		"t_dhw_1_min" : { 
 			"name" : "Schaltschwelle_AUX_TDHW", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 73 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,85",
@@ -939,8 +939,8 @@
 		},
 		"delta_t_ch" : { 
 			"name" : "Spreizung_Mod_HZ", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 83 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,2,1,20",
@@ -950,8 +950,8 @@
 		},
 		"v_var" : { 
 			"name" : "v_var", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 9C 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -960,8 +960,8 @@
 		},
 		"t_flow_ch_adj" : { 
 			"name" : "Anpass_T_VL_Heizen", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 A0 00 00", 
-			"id" : "10A", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -971,8 +971,8 @@
 		},
 		"t_flow_cool_adj" : { 
 			"name" : "Anpass_T_VL_Kuehlen", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 A1 00 00", 
-			"id" : "10A", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -982,8 +982,8 @@
 		},
 		"min_pressure" : { 
 			"name" : "min_pressure", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 07 28 00 00", 
-			"id" : "190", 
 			"divisor" : "1000", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -993,8 +993,8 @@
 		},
 		"max_pressure" : { 
 			"name" : "max_pressure", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 07 27 00 00", 
-			"id" : "190", 
 			"divisor" : "1000", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1004,8 +1004,8 @@
 		},
 		"setpoint_pressure" : { 
 			"name" : "setpoint_pressure", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 07 25 00 00", 
-			"id" : "190", 
 			"divisor" : "1000", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1015,8 +1015,8 @@
 		},
 		"max_pressure_drop" : { 
 			"name" : "max_pressure_drop", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 07 26 00 00", 
-			"id" : "190", 
 			"divisor" : "1000", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1026,8 +1026,8 @@
 		},
 		"hc_func" : { 
 			"name" : "HK_Funktion", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 01 41 00 00", 
-			"id" : "310", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "value_code",
@@ -1041,8 +1041,8 @@
 		},
 		"t_frost_protect" : { 
 			"name" : "T_Frostschutz", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0A 00 00 00", 
-			"id" : "310", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "value_code",
@@ -1076,8 +1076,8 @@
 		},
 		"insulation" : { 
 			"name" : "insulation", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 01 0C 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1094,8 +1094,8 @@
 		},
 		"screed" : { 
 			"name" : "screed", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 01 1A 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1109,8 +1109,8 @@
 		},
 		"t_screed_day1" : { 
 			"name" : "screed_day1", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B B9 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1120,8 +1120,8 @@
 		},
 		"t_screed_day2" : { 
 			"name" : "screed_day2", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B BA 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1131,8 +1131,8 @@
 		},
 		"t_screed_day3" : { 
 			"name" : "screed_day3", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B BB 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1142,8 +1142,8 @@
 		},
 		"t_screed_day4" : { 
 			"name" : "screed_day4", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B BC 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1153,8 +1153,8 @@
 		},
 		"t_screed_day5" : { 
 			"name" : "screed_day5", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B BD 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1164,8 +1164,8 @@
 		},
 		"t_screed_day6" : { 
 			"name" : "screed_day6", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B BE 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1175,8 +1175,8 @@
 		},
 		"t_screed_day7" : { 
 			"name" : "screed_day7", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B BD 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1186,8 +1186,8 @@
 		},
 		"t_screed_day8" : { 
 			"name" : "screed_day8", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C0 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1197,8 +1197,8 @@
 		},
 		"t_screed_day9" : { 
 			"name" : "screed_day9", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C1 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1208,8 +1208,8 @@
 		},
 		"t_screed_day10" : { 
 			"name" : "screed_day10", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C2 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1219,8 +1219,8 @@
 		},
 		"t_screed_day11" : { 
 			"name" : "screed_day11", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C3 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1230,8 +1230,8 @@
 		},
 		"t_screed_day12" : { 
 			"name" : "screed_day12", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C4 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1241,8 +1241,8 @@
 		},
 		"t_screed_day13" : { 
 			"name" : "screed_day13", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C5 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1252,8 +1252,8 @@
 		},
 		"t_screed_day14" : { 
 			"name" : "screed_day14", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C6 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1263,8 +1263,8 @@
 		},
 		"t_screed_day15" : { 
 			"name" : "screed_day15", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C7 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1274,8 +1274,8 @@
 		},
 		"t_screed_day16" : { 
 			"name" : "screed_day16", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C8 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1285,8 +1285,8 @@
 		},
 		"t_screed_day17" : { 
 			"name" : "screed_day17", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B C9 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1296,8 +1296,8 @@
 		},
 		"t_screed_day18" : { 
 			"name" : "screed_day18", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B CA 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1307,8 +1307,8 @@
 		},
 		"t_screed_day19" : { 
 			"name" : "screed_day19", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B CB 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1318,8 +1318,8 @@
 		},
 		"t_screed_day20" : { 
 			"name" : "screed_day20", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B CC 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1329,8 +1329,8 @@
 		},
 		"t_screed_day21" : { 
 			"name" : "screed_day21", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B CD 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1340,8 +1340,8 @@
 		},
 		"t_screed_day22" : { 
 			"name" : "screed_day22", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B CD 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1351,8 +1351,8 @@
 		},
 		"t_screed_day23" : { 
 			"name" : "screed_day23", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B CF 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1362,8 +1362,8 @@
 		},
 		"t_screed_day24" : { 
 			"name" : "screed_day24", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B D0 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1373,8 +1373,8 @@
 		},
 		"t_screed_day25" : { 
 			"name" : "screed_day25", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B D1 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1384,8 +1384,8 @@
 		},
 		"t_screed_day26" : { 
 			"name" : "screed_day26", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B D2 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1395,8 +1395,8 @@
 		},
 		"t_screed_day27" : { 
 			"name" : "screed_day27", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B D3 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1406,8 +1406,8 @@
 		},
 		"t_screed_day28" : { 
 			"name" : "screed_day28", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 0B D4 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1417,8 +1417,8 @@
 		},
 		"t_out_lim_day" : { 
 			"name" : "Heizgrenze_Tag", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 16 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,10,1,40",
@@ -1428,8 +1428,8 @@
 		},
 		"t_out_lim_night" : { 
 			"name" : "Heizgrenze_Nacht", 
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 01 17 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,10,1,40",
@@ -1439,8 +1439,8 @@
 		},
 		"t_flow_day" : { 
 			"name" : "T_Vorlauf_Tag", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 29 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,90",
@@ -1450,8 +1450,8 @@
 		},
 		"t_flow_night" : { 
 			"name" : "T_Vorlauf_Nacht", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 2A 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,90",
@@ -1461,8 +1461,8 @@
 		},
 		"max_t_flow" : { 
 			"name" : "Max_T_Vorlauf", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 28 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,90",
@@ -1472,8 +1472,8 @@
 		},
 		"min_t_flow" : { 
 			"name" : "Min_T_Vorlauf", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 2B 00 00", 
-			"id" : "190",
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,18,1,90",
@@ -1483,8 +1483,8 @@
 		},
 		"hc_adapt" : { 
 			"name" : "hc_adapt", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 15 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1498,8 +1498,8 @@
 		},
 		"start_tout_cool" : { 
 			"name" : "Kuehlen_A_Temp_Start", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 5B 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,15,1,45",
@@ -1509,8 +1509,8 @@
 		},
 		"max_tout_cool" : { 
 			"name" : "Kuehlen_A_Temp_Max", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 5C 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,45",
@@ -1520,8 +1520,8 @@
 		},
 		"t_flow_cool_start" : { 
 			"name" : "Kuehlen_VL_Soll_Start", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 5D 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,5,1,25",
@@ -1531,8 +1531,8 @@
 		},
 		"t_flow_cool_max" : { 
 			"name" : "Kuehlen_VL_Soll_Max", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 5E 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,5,1,25",
@@ -1542,8 +1542,8 @@
 		},
 		"min_t_flow_cool" : { 
 			"name" : "Kuehlen_VL_Soll_Abs_Min", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 63 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,5,1,25",
@@ -1553,8 +1553,8 @@
 		},
 		"t_flow_cool" : { 
 			"name" : "Kuehlen_VL_Soll_HK_On",
+			"system" : "comfort|ultra",
 			"command" : "61 00 FA 03 DD 00 00", 
-			"id" : "10A", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1564,8 +1564,8 @@
 		},
 		"cool_setpoint_adj" : { 
 			"name" : "Kuehl_Soll_Korr_Parallel", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 59 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,-5,0.1,5,1",
@@ -1575,8 +1575,8 @@
 		},
 		"circ_pump_dhw" : { 
 			"name" : "circ_pump_dhw", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 82 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1590,8 +1590,8 @@
 		},
 		"circ_pump_interval" : { 
 			"name" : "circ_pump_interval", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 5E 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1601,8 +1601,8 @@
 		},
 		"anti_leg_day" : { 
 			"name" : "anti_leg_day", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 01 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1623,8 +1623,8 @@
 		},
 		"anti_leg_time" : { 
 			"name" : "anti_leg_time", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA FD F4 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1634,8 +1634,8 @@
 		},
 		"anti_leg_temp" : { 
 			"name" : "anti_leg_temp", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 05 87 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1645,8 +1645,8 @@
 		},
 		"max_dhw_loading" : { 
 			"name" : "Max_WW_Ladezeit", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 80 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,0,1,240",
@@ -1656,8 +1656,8 @@
 		},
 		"dhw_off_time" : { 
 			"name" : "WW_Sperrzeit", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 4E 3F 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,0,1,240",
@@ -1667,8 +1667,8 @@
 		},
 		"one_hot_water" : { 
 			"name" : "one_hot_water", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 44 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1682,8 +1682,8 @@
 		},
 		"timer_boh" : { 
 			"name" : "Wartezeit_BOH", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 92 00 00", 
-			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
 			"FHEMControl" : "slider,20,1,95",
@@ -1693,8 +1693,8 @@
 		},
 		"t_reduced" : { 
 			"name" : "T_Absenkung", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 08 00 00 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1704,8 +1704,8 @@
 		},
 		"t_absence" : { 
 			"name" : "T_Abwesend", 
+			"system" : "comfort|ultra",
 			"command" : "31 00 FA 01 3D 00 00", 
-			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "true", 
 			"FHEMControl" : "disabled",
@@ -1713,10 +1713,60 @@
 			"unit" : "deg",
 			"type" : "float"
 		},
+		"comp_aktiv" : {
+			"name" : "Betrieb_Kompressor",
+			"system" : "comfort|ultra",
+			"command" : "A1 00 61 00 00 00 00",
+			"divisor" : "1",
+			"writable" : "false",
+			"FHEMPollTime" : 10,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "off",
+				"256" : "on"
+			}
+		},
+		"pump_aktiv" : {
+			"name" : "Betrieb_UWPumpe",
+			"system" : "comfort|ultra",
+			"command" : "A1 00 FA FD AC 00 00",
+			"divisor" : "1",
+			"writable" : "false",
+			"FHEMPollTime" : 10,
+			"unit" : "",
+			"type" : "longint",
+			"value_code" : {
+				"0" : "off",
+				"256" : "on"
+			}
+		},
+		"temperature_spread_PWM" : {
+			"name" : "T-Spreizung_HZK_PWM_UWP",
+			"system" : "ultra",
+			"command" : "A1 00 FA 06 DB 00 00",
+			"divisor" : "10",
+			"writable" : "true",
+			"FHEMControl" : "slider,3,0.5,10,1",
+			"FHEMPollTime" : 300,
+			"unit" : "deg",
+			"type" : "float"
+		},
+		"offset_T_flow" : {
+			"name" : "Offset_T_Vorlauf",
+			"system" : "ultra",
+			"command" : "A1 00 FA 06 E2 00 00",
+			"divisor" : "10",
+			"writable" : "true",
+			"FHEMControl" : "slider,0,0.5,10,1",
+			"FHEMPollTime" : 300,
+			"unit" : "deg",
+			"type" : "float"
+		},    
 		"t_room" :{
 			"name" : "Raumtemperatur_Rocon_U1",
+			"system" : "comfort|ultra",
 			"command" : "81 00 FA 00 11 00 00",
-			"id" : "190",
 			"divisor" : "10",
 			"writable" : "false",
 			"FHEMPollTime" : 0,
@@ -1725,8 +1775,8 @@
 		},
 		"t_outdoor_ot1_MA" : {
 			"name" : "T_Aussen_MA",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A 0C 00 00 00 00", 
-			"id" : "-1", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1735,8 +1785,8 @@
 		},
 		"t_dhw_MA" : { 
 			"name" : "T_Warmwasser_MA", 
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 0A 2B 00 00", 
-			"id" : "-1", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1745,8 +1795,8 @@
 		},
 		"t_hc_MA1" : { 
 			"name" : "T_direkter_Heizkreis_MA1",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 08 22 00 00", 
-			"id" : "-1", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1755,8 +1805,8 @@
 		},
 		"t_hc_MA2" : { 
 			"name" : "T_direkter_Heizkreis_MA2",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A 0D 00 00 00 00", 
-			"id" : "-1", 
 			"divisor" : "10", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1765,8 +1815,8 @@
 		},  		
 		"BM1_day_MA" : { 
 			"name" : "BM1_Tag_MA",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 01 22 00 00", 
-			"id" : "-1", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1775,8 +1825,8 @@
 		},  
 		"BM1_month_MA" : { 
 			"name" : "BM1_Monat_MA",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 01 23 00 00", 
-			"id" : "-1", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1785,8 +1835,8 @@
 		},  
 		"BM1_year_MA" : { 
 			"name" : "BM1_Jahr_MA",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 01 24 00 00", 
-			"id" : "-1", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1795,8 +1845,8 @@
 		},  
 		"BM1_hour_MA" : { 
 			"name" : "BM1_Stunde_MA",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 01 25 00 00", 
-			"id" : "-1", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1805,8 +1855,8 @@
 		},  
 		"BM1_minute_MA" : { 
 			"name" : "BM1_Minute_MA",
+			"system" : "justForMonitorMode",
 			"command" : "20 0A FA 01 26 00 00", 
-			"id" : "-1", 
 			"divisor" : "1", 
 			"writable" : "false", 
 			"FHEMPollTime" : 0,
@@ -1815,8 +1865,8 @@
 		},
 		"mode_01_MA" : { 
 			"name" : "Betriebsart_MA", 
+			"system" : "justForMonitorMode",
 			"command" : "20 0A 5A 00 00 00 00", 
-			"id" : "-1", 
 			"divisor" : "1", 
 			"writable" : "false",
 			"FHEMPollTime" : 0,
