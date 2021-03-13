@@ -1,6 +1,8 @@
 # fhemHPSU
 FHEM Module to communicate with a Rotex HPSU
 
+<img src="https://user-images.githubusercontent.com/48262831/111051497-bf34e980-8453-11eb-8b21-cd32ab6ee082.jpg" alt="Testaufbau" width="600"/>
+
 Changelog:
 
 1.0 # 19.12.19
@@ -56,3 +58,23 @@ Changelog:
 - Neues Reading: Info.LastDefrostDHWShrink (verringerung der WW Temp. beim letzten Abtauvorgang)
 - Neues Attribut: SuppressRetryWarnings (retries nicht loggen)
 - Neues Attribut: RememberSetValues (den zuletzt gesetzten Modus beim Init senden)
+
+1.12 # 25.01.21 - 20.02.21 - developer version
+- Monitor Mode: Readings erweitert mit Header Daten
+- Neues Reading: Info.Ts -> Temperatur Spreizung
+- Rotex HPSU Ultra wird ab jetzt unterstützt
+- ELM sendet nur die benötigten 7 Byte und füllt nicht auf 8 Bytes auf
+- Sende- und Empfangsheader berechnen und setzen - das macht "id" im JSON überflüssig
+- Neues Attribut RememberSetValues getestet und ohne Warnung aktivierbar
+- Info.LastDefrostDHWShrink auf 2 Nachkommastellen gekürzt
+- Initialisierung optimiert/umgebaut
+- Log Ausgaben erweitert
+- Definition erweitert mit der optionalen Unterscheidung [comfort|ultra] -> define <name> HPSU <device> [system]
+- Im JSON File ist "system" für [comfort|ultra] hinzu gekommen.
+
+1.13 # 13.03.2021
+- Warnung ausgeben, falls Ultra definiert ist und AntiContinousHeating aktiviert wird. Ist in der Kombination nicht nötig
+- HPSU_DbLog_split eingebaut
+- Nach AntiContinousHeating wieder den voher eingestellten Betriebsmodus einstellen und nicht fix auf "Heizen"
+- $attr{global}{modpath} anstatt cwd()
+- Info.Ts auf 2 Nachkommastellen gekürzt
