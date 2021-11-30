@@ -1,5 +1,5 @@
 {
-	"version" : "3.7",
+	"version" : "3.8",
 	"commands":{
 		"t_hs" : { 
 			"name" : "Vorlauftemperatur_Waermeerzeuger", 
@@ -422,8 +422,9 @@
 			"system" : "comfort|ultra",
 			"command" : "31 00 FA C0 FF", 
 			"divisor" : "10", 
-			"writable" : "false", 
+			"writable" : "false",
 			"FHEMPollTime" : 60,
+			"statistic" : "h|d",
 			"unit" : "deg",
 			"type" : "float"
 		},
@@ -536,14 +537,14 @@
 			"type" : "float"
 		},
 		"error" : { 
-			"name" : "error", 
+			"name" : "Fehlercode", 
 			"system" : "comfort|ultra",
 			"command" : "31 00 FA 13 88 00 00", 
 			"divisor" : "1", 
 			"writable" : "false", 
-			"FHEMPollTime" : 0,
+			"FHEMPollTime" : 5,
 			"unit" : "",
-			"type" : "value"
+			"type" : "longint"
 		},
 		"outdoor_type" : { 
 			"name" : "Aussengeraet", 
@@ -1552,13 +1553,13 @@
 			"type" : "float"
 		},
 		"t_flow_cool" : { 
-			"name" : "Kuehlen_VL_Soll_HK_On",
+			"name" : "Kuehlen_VL_Soll",
 			"system" : "comfort|ultra",
 			"command" : "61 00 FA 03 DD 00 00", 
 			"divisor" : "10", 
 			"writable" : "true", 
-			"FHEMControl" : "disabled",
-			"FHEMPollTime" : 0,
+			"FHEMControl" : "slider,8,1,30",
+			"FHEMPollTime" : 600,
 			"unit" : "deg",
 			"type" : "float"
 		},
