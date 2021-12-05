@@ -83,6 +83,7 @@
 #                    - Calculate "AktQ" only if compressor is running
 #           27.11.21 - Remove internal redundant values ..{AktVal} and ..{FHEMLastResponse}
 #                    - set: if verify failed retry 2 times
+#           05.12.21 - Debug Log(s) (Fuxi) -> https://forum.fhem.de/index.php/topic,106503.msg1191246.html#msg1191246
 
 #ToDo:
 # - suppress retry
@@ -95,7 +96,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.14';
+use constant HPSU_MODULEVERSION => '1.14d';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -823,7 +824,7 @@ sub HPSU_Task($)
           undef $hash->{helper}{queue};
           readingsSingleUpdate($hash, "Comm.SetStatus", "Error: timeout [$sque] (".__LINE__.")", 1);
 
-          HPSU_Log("HPSU ".__LINE__.": Comm.SetStatus Error: timeout [$sque]" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+          HPSU_Log("HPSU ".__LINE__.": Comm.SetStatus Error: timeout [$sque]" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
           $hash->{helper}{CANSetTries} = 0;
         }
         else
@@ -831,7 +832,7 @@ sub HPSU_Task($)
           if (AttrVal($name, "SuppressRetryWarnings", "on") eq "off")
           {
             readingsSingleUpdate($hash, "Comm.SetStatus", "Error: retry [$hash->{helper}{queue}[0]] (".__LINE__.")", 1);
-            HPSU_Log("HPSU ".__LINE__.": Comm.SetStatus Error: retry [$hash->{helper}{queue}[0]]" ) if (AttrVal($name, "DebugLog", "off") eq "on");          
+            HPSU_Log("HPSU ".__LINE__.": Comm.SetStatus Error: retry [$hash->{helper}{queue}[0]]" ) if (AttrVal($name, "DebugLog", "off") =~ "on");          
           }
         }
         $hash->{helper}{CANRequestPending} = -1;
@@ -851,7 +852,7 @@ sub HPSU_Task($)
         if ($hash->{helper}{GetStatusError} > 1)
         {
           readingsSingleUpdate($hash, "Comm.GetStatus", "Error: timeout name: $hash->{helper}{CANRequestName} (".__LINE__.")", 1);
-          HPSU_Log("HPSU ".__LINE__.": Comm.GetStatus Error: timeout name: $hash->{helper}{CANRequestName}" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+          HPSU_Log("HPSU ".__LINE__.": Comm.GetStatus Error: timeout name: $hash->{helper}{CANRequestName}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
           $hash->{helper}{CANRequestPending} = -1;
           $hash->{helper}{GetStatusError} = 0;
         }
@@ -912,7 +913,7 @@ sub HPSU_Task($)
       
       $hash->{helper}{status_pump_WasActive} = 0;
       
-      HPSU_Log("HPSU ".__LINE__.": AntiMixerSwing occurred" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+      HPSU_Log("HPSU ".__LINE__.": AntiMixerSwing occurred" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
     }
   }
 
@@ -1166,12 +1167,14 @@ sub HPSU_Task($)
             if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
             {
               push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{jcmd}{t_frost_protect}{value_code}{'-160'}"; 
-              HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost from $t_frost_protect to Off" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+              HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost from $t_frost_protect to Off" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
             }
           }
-          push @{$hash->{helper}{queue}}, "mode_01;$hash->{jcmd}{mode_01}{value_code}{'5'}"; #"Sommer"
+          #push @{$hash->{helper}{queue}}, "mode_01;$hash->{jcmd}{mode_01}{value_code}{'5'}"; #"Sommer"          
+          my $RetryTimeStamp = gettimeofday()+10;
+          push @{$hash->{helper}{queue}}, "mode_01;$hash->{jcmd}{mode_01}{value_code}{'5'};write;3;$RetryTimeStamp";
           
-          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{jcmd}{mode_01}{value_code}{'5'}" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{jcmd}{mode_01}{value_code}{'5'}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
         }
       }
     }
@@ -1191,12 +1194,12 @@ sub HPSU_Task($)
             if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
             {
               push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{helper}{t_frost_protect_lst}";
-              HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost to $hash->{helper}{t_frost_protect_lst}" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+              HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost to $hash->{helper}{t_frost_protect_lst}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
             }
             delete $hash->{helper}{t_frost_protect_lst};
           }
           
-          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{helper}{DefrostBModeStart}" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{helper}{DefrostBModeStart}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
         }
       }
     }
@@ -1261,6 +1264,9 @@ sub HPSU_Task($)
         {
           my ($key, $val, $state, $rep, $repWait) = split(";", $hash->{helper}{queue}[0]);
           my $AktVal = ReadingsVal($name, "HPSU.$hash->{jcmd}{$key}{name}", undef);
+          my $infoName = "\"$hash->{jcmd}{$key}{name}\" [$key]";
+          
+          HPSU_Log("HPSU ".__LINE__.": SetVal k:$key v:$val, s:$state, r:$rep, wait:$repWait" ) if (AttrVal($name, "DebugLog", "off") =~ "on");          
           
           if ($state eq "check")
           {            
@@ -1276,9 +1282,7 @@ sub HPSU_Task($)
           if ( $state eq "checkAktVal" or
                $state eq "verify" )
           {
-            my $infoName = "\"$hash->{jcmd}{$key}{name}\" [$key]";
-            
-            if ($AktVal)
+            if (defined $AktVal)
             {
               my $isSame = 0;
 
