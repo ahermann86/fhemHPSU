@@ -85,6 +85,8 @@
 #           27.11.21 - Remove internal redundant values ..{AktVal} and ..{FHEMLastResponse}
 #                    - set: if verify failed retry 2 times
 #           05.12.21 - Debug Log(s) (Fuxi) -> https://forum.fhem.de/index.php/topic,106503.msg1191246.html#msg1191246
+#           07.12.21 - Do AntiMixerSwing only if DHW > 35.5
+#                    - AntiContinousHeating - repeat restore mode_01 when calculating DHW shrink
 
 #ToDo:
 # - suppress retry
@@ -97,7 +99,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.14d1';
+use constant HPSU_MODULEVERSION => '1.14d2';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -906,7 +908,8 @@ sub HPSU_Task($)
         $hash->{helper}{status_pump_LstTimeActive}+2.5*60 < gettimeofday() and
         $T_VlWez > 0 and
         $hash->{helper}{HPSULstModeTime}+5*60 < gettimeofday() and
-        !$Mod_Cool )
+        !$Mod_Cool and
+        ReadingsNum($name, "HPSU.$hash->{jcmd}{t_dhw}{name}", 48) > 35.5)
     {
       push @{$hash->{helper}{queue}}, "mode_01;$hash->{jcmd}{mode_01}{value_code}{'1'}";
       push @{$hash->{helper}{queue}}, "mode_01;$AktMode_01";
@@ -1203,9 +1206,7 @@ sub HPSU_Task($)
           {
             if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
             {
-              #push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{helper}{t_frost_protect_lst}";
-              my $RetryTimeStamp = gettimeofday()+10;
-              push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{helper}{t_frost_protect_lst};write;3;$RetryTimeStamp";              
+              push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{helper}{t_frost_protect_lst}";
               
               HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost to $hash->{helper}{t_frost_protect_lst}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
             }
@@ -1240,6 +1241,12 @@ sub HPSU_Task($)
         }      
         $hash->{helper}{DefrostStateTime} = 0;
         $hash->{helper}{DefrostState} = 0;
+        
+        if ($hash->{helper}{DefrostBModeStart} ne ReadingsVal($name, "HPSU.$hash->{jcmd}{mode_01}{name}","Heizen"))
+        {
+          push @{$hash->{helper}{queue}}, "mode_01;$hash->{helper}{DefrostBModeStart}";
+          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating try again set back to $hash->{helper}{DefrostBModeStart}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
+        }
       }
     }
   }
