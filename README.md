@@ -5,8 +5,10 @@ FHEM Module to communicate with a Rotex HPSU
 
 Changelog:
 
-1.15 # 03.12.2021
+1.15 # 23.12.2021
 - Wenn beim Parsen der JSON Datei ein Fehler auftritt, wird der Fehlertext über das Internal "JSON_version" ausgegeben.
+- Wenn AntiContinousHeating aktiv ist, kann der Modus nicht direkt geändert werden. Er wird dann erst nach dem Abtauen übernommen
+- Ergänzungen JSON Datei V3.9: Fehlercode (5s), T_Bivalenz, Einmal_Warmwasser_mit_Heizstab (nur setzen), Relais (Relaistest), ContinousHeating und ComfortHeating (nur Ultra!)
 
 1.14 # 05.11.21 - 30.11.2021 - developer version
 - Code optimiert/bereinigt
