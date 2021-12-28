@@ -84,9 +84,10 @@
 #                    - Calculate "AktQ" only if compressor is running
 #           27.11.21 - Remove internal redundant values ..{AktVal} and ..{FHEMLastResponse}
 #                    - set: if verify failed retry 2 times
-#           05.12.21 - Debug Log(s) (Fuxi) -> https://forum.fhem.de/index.php/topic,106503.msg1191246.html#msg1191246
-#           07.12.21 - Do AntiMixerSwing only if DHW > 35.5
-#                    - AntiContinousHeating - repeat restore mode_01 when calculating DHW shrink
+# ah 1.15 - 01.12.21 - handle exception for decode_json(..)
+#           07.12.21 - if AntiContinousHeating is currently active mustn't let set mode_01 direct
+#                    - Do AntiMixerSwing only if DHW > 35.5
+# ah 1.16 - 29.12.21 - get "split" -> $TimeSuspend if AntiShortCycle occurred
 
 #ToDo:
 # - suppress retry
@@ -99,7 +100,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.14d2';
+use constant HPSU_MODULEVERSION => '1.16d1';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -111,6 +112,7 @@ sub HPSU_CAN_RequestOrSetMsg($$$);
 sub HPSU_CAN_RAW_Message($$);
 sub HPSU_Parse_SetGet_cmd($$);
 sub HPSU_Log($); #for development
+sub HPSU_RAW_Log($); #for MA development
 
 my %HPSU_sets =
 (
@@ -141,7 +143,7 @@ sub HPSU_Initialize($)
   $hash->{DbLog_splitFn} = "HPSU_DbLog_split";
   $hash->{AttrList}  = "AutoPoll:on,off AntiMixerSwing:on,off ".
                        "CheckDHWInterrupted:on,off ".
-                       "DebugLog:on,onWithMsg,onDHW,onPoll,off ".
+                       "DebugLog:on,onDHW,off ".
                        "AntiContinousHeating:on,off ".
                        "RememberSetValues:on,off ".
                        "SuppressRetryWarnings:on,off ".   #"Comm.(Set|Get)Status", "Error: retry ...
@@ -349,9 +351,7 @@ sub HPSU_Read($)
 
       ($msgSplit, $buffer) = split("\r", $buffer, 2);
       $msgSplit =~ s/ +$//; #delete whitespace
-      
-      HPSU_Log("HPSU ".__LINE__.": MM RAW: $msgSplit" ) if (AttrVal($name, "DebugLog", "off") eq "onWithMsg");
-      
+            
       #AT H1
       my $Header = "";
       ($Header, $msgSplit) = split(" ", $msgSplit, 2);      
@@ -359,12 +359,25 @@ sub HPSU_Read($)
       my ($key, $nicename, $out) = HPSU_CAN_ParseMsg($hash, $msgSplit);
       my ($rawName, $rawOut) = HPSU_CAN_RAW_Message($hash, $msgSplit);
       
+      my $sreq = undef;
+      my $HeaderDes = sprintf("%03X", hex(substr($msgSplit, 0, 1)) * 0x10 * 0x08);
+      if ($Header eq "680")
+      {
+        $sreq = 1;
+      }
+      else
+      {
+        $sreq = substr($msgSplit, 0, 2) eq "D2";
+      }
+      
       if ($key)
       {
+        HPSU_RAW_Log("H:$Header HD:$HeaderDes M:$msgSplit K:$key-$nicename O:$out") if (not $sreq);
         readingsSingleUpdate($hash, "HPSU.$nicename"."_MsgHeader.$Header", $out." : ".$rawOut, 1);
       }
       else
       {
+        HPSU_RAW_Log("H:$Header HD:$HeaderDes M:$msgSplit") if (not $sreq);
         readingsSingleUpdate($hash, "$rawName"."_MsgHeader.$Header", $rawOut, 1) if ($rawName);
       }
     }
@@ -431,16 +444,31 @@ sub HPSU_Set($@)
     return "Monitor mode active.. set values disabled!" if ($hash->{helper}{MonitorMode});
     return "$hpsuNameCmd not writable" if ($jcmd->{$hpsuNameCmd}{writable} ne "true");
 
-    if (AttrVal($name, "RememberSetValues", "off") eq "on")
+    if ($hpsuNameCmd eq "mode_01")
     {
-      if ($hpsuNameCmd eq "mode_01")
+      if (AttrVal($name, "RememberSetValues", "off") eq "on")
       {
         readingsSingleUpdate($hash, "FHEMSET.$hash->{jcmd}{$hpsuNameCmd}{name}", $val, 1);
+      }
+      if (defined $hash->{helper}{AntiCHeat}{BModeStart})  #AntiContinousHeating is currently active
+      {
+        my $infoName = "\"$hash->{jcmd}{$hpsuNameCmd}{name}\" [$hpsuNameCmd]";
+        
+        if ($hash->{helper}{AntiCHeat}{BModeStart} eq $val)
+        {          
+          readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName already set to \"$val\" after AntiContinousHeating (".__LINE__.")", 1);
+        }
+        else
+        {
+          readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName set to \"$val\" after AntiContinousHeating (".__LINE__.")", 1);
+          $hash->{helper}{AntiCHeat}{BModeStart} = $val;
+        }
+        $val = undef;
       }
     }
     
     #min/max check
-    if ($jcmd->{$hpsuNameCmd}{FHEMControl} and (index($jcmd->{$hpsuNameCmd}{FHEMControl}, "slider,") == 0) )
+    if (defined $val and $jcmd->{$hpsuNameCmd}{FHEMControl} and (index($jcmd->{$hpsuNameCmd}{FHEMControl}, "slider,") == 0) )
     {
       my $dmy = "";
       my $que = "";
@@ -478,7 +506,7 @@ sub HPSU_Set($@)
     }
     my $qstr = "$hpsuNameCmd;$val";
     
-    push @{$hash->{helper}{queue}}, $qstr;
+    push @{$hash->{helper}{queue}}, $qstr if (defined $val);
   }
   else
   {
@@ -559,10 +587,7 @@ sub HPSU_Get($$@)
 sub HPSU_Init($)
 {
   my ($hash) = @_;
-  my $buf;
   my $name = $hash->{NAME};
-  my $char = undef;
-  my $ret = undef;
 
   $hash->{System} = "comfort" if (not($hash->{System}));   #default value
   
@@ -570,10 +595,8 @@ sub HPSU_Init($)
   # Reset
   $hash->{helper}{PARTIAL} = "";
   @{$hash->{helper}{queue}} = ();
-  $hash->{helper}{DefrostState} = 0;
+  delete $hash->{helper}{AntiCHeat};
   delete $hash->{helper}{DHWForce};
-
-  #$ret = DevIo_SimpleWrite($hash, "AT Z\r", 2);  #reset
 
   $hash->{ELMState} = "init";
   $hash->{ELM327_Version} = "not read";
@@ -627,7 +650,7 @@ sub HPSU_Attr($$$$)
       }
     }
     
-    if ($attrName eq "AntiContinousHeating" and $attrValue eq "on")
+    if ($attrName eq "AntiContinousHeating" and $attrValue =~ "on")
     {
       HPSU_Read_JSON_updreadings($hash);
       if ($hash->{JSON_version} < 3.6)
@@ -648,14 +671,16 @@ sub HPSU_Attr($$$$)
   {
     if($cmd eq "set")
     {
-      return "Wrong parameters - examples are: \"1\" or \"2;30\"" if (not ($attrValue =~ /(^\d+;\d+;\d+$)|(^\d+$)/));
-      readingsSingleUpdate($hash, "Info.AntiShortCycle", "Idle", 1);
+      if ($attrValue ne "0")
+      {
+        return "Wrong parameters - examples are: \"0\", \"1\" or \"1;3;30\"" if (not ($attrValue =~ /(^\d+;\d+;\d+$)|(^\d+$)/));
+        readingsSingleUpdate($hash, "Info.AntiShortCycle", "Idle", 1);
+        return undef;
+      }
     }
-    else
-    {
-      readingsDelete($hash, "Info.AntiShortCycle");
-      delete $hash->{helper}{ShortCycle};
-    }    
+    
+    readingsDelete($hash, "Info.AntiShortCycle");
+    delete $hash->{helper}{ShortCycle};
   }
 
   return undef;
@@ -935,7 +960,6 @@ sub HPSU_Task($)
       {
         ($MaxDiff, $MinTimeMaxDiff, $TimeSuspend) = split(";", $AntiShortCycleVal);
       }
-      
       if ( (ReadingsNum($name, "HPSU.$hash->{jcmd}{t_hc}{name}", 0) -
             ReadingsNum($name, "HPSU.$hash->{jcmd}{t_hc_set}{name}", 0)) > $MaxDiff )
       {
@@ -973,14 +997,19 @@ sub HPSU_Task($)
       {
         delete $hash->{helper}{ShortCycle}{TimeMaxDiffOccurred};
         
-        if ($AktMode eq $hash->{jcmd}{mode}{value_code}{"3"})  #Abtauen
+        if (    $AktMode eq $hash->{jcmd}{mode}{value_code}{"3"}     #Abtauen
+            or  $AktMode eq $hash->{jcmd}{mode}{value_code}{"4"} )   #DHW
         {
           readingsSingleUpdate($hash, "Info.AntiShortCycle", "Idle", 1);
-          HPSU_Log("HPSU ".__LINE__.": AntiShortCycle - Idle (reset defrost)" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
+          HPSU_Log("HPSU ".__LINE__.": AntiShortCycle - Idle - reset because \"$AktMode\"" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
           delete $hash->{helper}{ShortCycle};
         }
         else
         {
+          if ($AntiShortCycleVal =~ /^\d+;\d+;\d+$/)
+          {
+            ($MaxDiff, $MinTimeMaxDiff, $TimeSuspend) = split(";", $AntiShortCycleVal);
+          }
           $hash->{helper}{ShortCycle}{TimeSuspend} = gettimeofday()+$TimeSuspend*60;
           readingsSingleUpdate($hash, "Info.AntiShortCycle", "on", 1);
           HPSU_Log("HPSU ".__LINE__.": AntiShortCycle - on" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
@@ -1157,97 +1186,80 @@ sub HPSU_Task($)
 
   #Reading Status "Info.LastDefrostDHWShrink" defrost
   #AntiContinousHeating while heating
+  if (not defined $hash->{helper}{AntiCHeat}{State})
   {
-    $hash->{helper}{DefrostState} = 0 if (not exists ($hash->{helper}{DefrostState}));
-    $hash->{helper}{DefrostStateTime} = gettimeofday() if (not exists ($hash->{helper}{DefrostStateTime}));
-    
-    if ($hash->{helper}{DefrostState} == 0)
+    if ($AktMode                     eq $hash->{jcmd}{mode}{value_code}{"3"} and   #"Abtauen"
+        $hash->{helper}{HPSULstMode} eq $hash->{jcmd}{mode}{value_code}{"1"})      #"Heizen"
     {
-      if ($AktMode                     eq $hash->{jcmd}{mode}{value_code}{"3"} and   #"Abtauen"
-          $hash->{helper}{HPSULstMode} eq $hash->{jcmd}{mode}{value_code}{"1"})      #"Heizen"
-      {
-        $hash->{helper}{DefrostStateTime} = gettimeofday();
-        $hash->{helper}{DefrostState} = 1;
-        $hash->{helper}{DefrostDHWStart} = ReadingsNum($name, "HPSU.$hash->{jcmd}{t_dhw}{name}",48);
-        $hash->{helper}{DefrostBModeStart} = ReadingsVal($name, "HPSU.$hash->{jcmd}{mode_01}{name}","Heizen");
+      $hash->{helper}{AntiCHeat}{StateTime} = gettimeofday();
+      $hash->{helper}{AntiCHeat}{State} = 1;
+      $hash->{helper}{AntiCHeat}{DHWStart} = ReadingsNum($name, "HPSU.$hash->{jcmd}{t_dhw}{name}",48);
+      $hash->{helper}{AntiCHeat}{BModeStart} = ReadingsVal($name, "HPSU.$hash->{jcmd}{mode_01}{name}","Heizen");
 
-        if (AttrVal($name, "AntiContinousHeating", "off") eq "on")
-        {
-          my $t_frost_protect = ReadingsVal($name, "HPSU.$hash->{jcmd}{t_frost_protect}{name}","NotRead");
-          if ($t_frost_protect ne $hash->{jcmd}{t_frost_protect}{value_code}{'-160'})  #-160 -> "Aus"
-          {
-            $hash->{helper}{t_frost_protect_lst} = $t_frost_protect;
-            if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
-            {
-              push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{jcmd}{t_frost_protect}{value_code}{'-160'}"; 
-              HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost from $t_frost_protect to Off" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
-            }
-          }
-          push @{$hash->{helper}{queue}}, "mode_01;$hash->{jcmd}{mode_01}{value_code}{'5'}"; #"Sommer"          
-          
-          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{jcmd}{mode_01}{value_code}{'5'}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
-        }
-      }
-    }
-    elsif ($hash->{helper}{DefrostState} == 1)
-    {
-      if ($AktMode ne $hash->{jcmd}{mode}{value_code}{"3"} or   #"Abtauen"
-          $hash->{helper}{DefrostStateTime}+15*60 < gettimeofday()) #emergency exit after 15min
+      if (AttrVal($name, "AntiContinousHeating", "off") eq "on")
       {
-        $hash->{helper}{DefrostStateTime} = gettimeofday();
-        $hash->{helper}{DefrostState}++;
-        
-        if (AttrVal($name, "AntiContinousHeating", "off") eq "on")
+        my $t_frost_protect = ReadingsVal($name, "HPSU.$hash->{jcmd}{t_frost_protect}{name}","NotRead");
+        if ($t_frost_protect ne $hash->{jcmd}{t_frost_protect}{value_code}{'-160'})  #-160 -> "Aus"
         {
-          push @{$hash->{helper}{queue}}, "mode_01;$hash->{helper}{DefrostBModeStart}";
-          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{helper}{DefrostBModeStart}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
-          
-          if(exists $hash->{helper}{t_frost_protect_lst})
+          $hash->{helper}{t_frost_protect_lst} = $t_frost_protect;
+          if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
           {
-            if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
-            {
-              push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{helper}{t_frost_protect_lst}";
-              
-              HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost to $hash->{helper}{t_frost_protect_lst}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
-            }
-            delete $hash->{helper}{t_frost_protect_lst};
+            push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{jcmd}{t_frost_protect}{value_code}{'-160'}"; 
+            HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost from $t_frost_protect to Off" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
           }
         }
-      }
-    }
-    elsif ($hash->{helper}{DefrostState} == 2)
-    {
-      my $time = $hash->{helper}{DefrostStateTime}+4*60 < gettimeofday(); #settling time 4min, then dhw is definitely stable
-      
-      if ($time)
-      {
-        push @{$hash->{helper}{queue}}, "t_dhw";   
-        $hash->{helper}{DefrostStateTime} = gettimeofday();
-        $hash->{helper}{DefrostState}++;
-      }
-    }
-    elsif ($hash->{helper}{DefrostState} == 3)
-    {
-      my $timeout = $hash->{helper}{DefrostStateTime}+30 < gettimeofday(); #emergency exit after 30sec
-      
-      if (ReadingsAge($name, "HPSU.$hash->{jcmd}{t_dhw}{name}", -1)+1 < gettimeofday() or   #new DHW value
-          $timeout)
-      {
-        if (not $timeout)
-        {
-          my $val = $hash->{helper}{DefrostDHWStart} - ReadingsNum($name, "HPSU.$hash->{jcmd}{t_dhw}{name}",48);
-          $val = sprintf("%.02f", $val);
-          readingsSingleUpdate($hash, "Info.LastDefrostDHWShrink", "$val °C", 1);
-        }      
-        $hash->{helper}{DefrostStateTime} = 0;
-        $hash->{helper}{DefrostState} = 0;
+        push @{$hash->{helper}{queue}}, "mode_01;$hash->{jcmd}{mode_01}{value_code}{'5'}"; #"Sommer"
         
-        if ($hash->{helper}{DefrostBModeStart} ne ReadingsVal($name, "HPSU.$hash->{jcmd}{mode_01}{name}","Heizen"))
-        {
-          push @{$hash->{helper}{queue}}, "mode_01;$hash->{helper}{DefrostBModeStart}";
-          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating try again set back to $hash->{helper}{DefrostBModeStart}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
-        }
+        HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{jcmd}{mode_01}{value_code}{'5'}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
       }
+    }
+  }
+  elsif ($hash->{helper}{AntiCHeat}{State} == 1)
+  {
+    if ($AktMode ne $hash->{jcmd}{mode}{value_code}{"3"} or   #"Abtauen"
+        $hash->{helper}{AntiCHeat}{StateTime}+15*60 < gettimeofday()) #emergency exit after 15min
+    {
+      $hash->{helper}{AntiCHeat}{StateTime} = gettimeofday();
+      $hash->{helper}{AntiCHeat}{State}++;
+      
+      push @{$hash->{helper}{queue}}, "mode_01;$hash->{helper}{AntiCHeat}{BModeStart}";
+      HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{helper}{AntiCHeat}{BModeStart}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
+      if(exists $hash->{helper}{t_frost_protect_lst})
+      {
+        if ($hash->{helper}{t_frost_protect_lst} ne "NotRead")
+        {
+          push @{$hash->{helper}{queue}}, "t_frost_protect;$hash->{helper}{t_frost_protect_lst}";
+          HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set Frost to $hash->{helper}{t_frost_protect_lst}" ) if (AttrVal($name, "DebugLog", "off") eq "on");
+        }
+        delete $hash->{helper}{t_frost_protect_lst};
+      }
+    }
+  }
+  elsif ($hash->{helper}{AntiCHeat}{State} == 2)
+  {
+    my $time = $hash->{helper}{AntiCHeat}{StateTime}+4.0*60 < gettimeofday(); #settling time 4min, then dhw is definitely stable
+    
+    if ($time)
+    {
+      push @{$hash->{helper}{queue}}, "t_dhw";   
+      $hash->{helper}{AntiCHeat}{StateTime} = gettimeofday();
+      $hash->{helper}{AntiCHeat}{State}++;
+    }
+  }
+  elsif ($hash->{helper}{AntiCHeat}{State} == 3)
+  {
+    my $timeout = $hash->{helper}{AntiCHeat}{StateTime}+30 < gettimeofday(); #emergency exit after 30sec
+    
+    if (ReadingsAge($name, "HPSU.$hash->{jcmd}{t_dhw}{name}", -1)+1 < gettimeofday() or   #new DHW value
+        $timeout)
+    {
+      if (not $timeout)
+      {
+        my $val = $hash->{helper}{AntiCHeat}{DHWStart} - ReadingsNum($name, "HPSU.$hash->{jcmd}{t_dhw}{name}",48);
+        $val = sprintf("%.02f", $val);
+        readingsSingleUpdate($hash, "Info.LastDefrostDHWShrink", "$val °C", 1);
+      }
+      delete $hash->{helper}{AntiCHeat};
     }
   }
 
@@ -1260,7 +1272,7 @@ sub HPSU_Task($)
       if ($hash->{helper}{queue}[0])
       {
         my $cntdp = $hash->{helper}{queue}[0] =~ tr/;//;
-
+        
         if ($cntdp == 0) #request
         {
           my $name = shift @{$hash->{helper}{queue}};
@@ -1283,18 +1295,33 @@ sub HPSU_Task($)
           my ($key, $val, $state, $rep, $repWait) = split(";", $hash->{helper}{queue}[0]);
           my $AktVal = ReadingsVal($name, "HPSU.$hash->{jcmd}{$key}{name}", undef);
           my $infoName = "\"$hash->{jcmd}{$key}{name}\" [$key]";
-          my $DoLog = 0;
-                    
+          
           if ($state eq "check")
-          {            
-            if ( not $AktVal 
-                  or ReadingsAge($name, "HPSU.$hash->{jcmd}{$key}{name}", -1) + 0.5 < gettimeofday() 
-                )
+          {
+            my $noRes = 0;
+            
+            if (defined $hash->{jcmd}{$key}{option})
             {
-              HPSU_CAN_RequestReadings($hash, $key, undef);
+              if ($hash->{jcmd}{$key}{option} =~ "noRes")
+              {
+                my $sque = shift @{$hash->{helper}{queue}};
+                
+                HPSU_CAN_RequestReadings($hash, $key, $val);
+                readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName set to \"$val\" (".__LINE__.")", 1);                
+                $noRes = 1;
+              }
             }
-            $hash->{helper}{queue}[0] = "$key;$val;checkAktVal;$rep";
-            $DoLog = 1;
+            
+            if (!$noRes)
+            {
+              if ( not defined $AktVal 
+                    or ReadingsAge($name, "HPSU.$hash->{jcmd}{$key}{name}", -1) + 0.5 < gettimeofday() 
+                  )
+              {
+                HPSU_CAN_RequestReadings($hash, $key, undef);
+              }
+              $hash->{helper}{queue}[0] = "$key;$val;checkAktVal;$rep";
+            }
           }
 
           if ( $state eq "checkAktVal" or
@@ -1303,7 +1330,6 @@ sub HPSU_Task($)
             if (defined $AktVal)
             {
               my $isSame = 0;
-              $DoLog = 1;
 
               if ( $hash->{jcmd}{$key}{FHEMControl} and
                   ($hash->{jcmd}{$key}{FHEMControl} eq "value_code") )
@@ -1340,7 +1366,6 @@ sub HPSU_Task($)
                   {
                     my $sque = shift @{$hash->{helper}{queue}};
                     readingsSingleUpdate($hash, "Comm.SetStatus", "Error: $infoName verify failed (".__LINE__.")", 1);
-                    HPSU_Log("HPSU ".__LINE__.": Set $infoName verify failed" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
                   }
                   else
                   {
@@ -1365,7 +1390,6 @@ sub HPSU_Task($)
           {
             if (!$repWait || $repWait < gettimeofday())
             {
-              $DoLog = 1;
               HPSU_CAN_RequestReadings($hash, $key, $val);
               $hash->{helper}{queue}[0] = "$key;$val;read;$rep";
             }
@@ -1373,15 +1397,9 @@ sub HPSU_Task($)
 
           if ($state eq "read")
           {
-            $DoLog = 1;
             HPSU_CAN_RequestReadings($hash, $key, undef);
             $hash->{helper}{queue}[0] = "$key;$val;verify;$rep";
           }
-          
-          if ($DoLog)
-          {
-            HPSU_Log("HPSU ".__LINE__.": SetVal k:$key v:$val, s:$state, r:$rep, wait:$repWait" ) if (AttrVal($name, "DebugLog", "off") =~ "on");          
-          }          
         }
       }
     }
@@ -1483,11 +1501,11 @@ sub HPSU_Task($)
 sub HPSU_Read_JSON_updreadings($)
 {
   my ($hash) = @_;
-  my ($anz, $ver) = HPSU_Read_JSON_File($hash);
+  my ($anz, $str) = HPSU_Read_JSON_File($hash);
 
   $hash->{JSON_parameters} = $anz;
-  $ver = "Error: ".$anz if ($anz < 0);
-  $hash->{JSON_version} = $ver;
+  $str = "Error $anz: $str" if ($anz < 0);
+  $hash->{JSON_version} = $str;
   
   return 1 if ($anz < 0);
 
@@ -1565,12 +1583,16 @@ sub HPSU_Read_JSON_File($)
   }
   else
   {
-    return -1;
+    return (-__LINE__, "Can't find/open commands_hpsu.json");
   }
 
   if (defined($json))
-  {
-    $data = decode_json($json);
+  {   
+    $data = eval { decode_json($json) };
+    if ($@)
+    {
+      return (-__LINE__, "Invalid json:\n$@");
+    }
 
     if ($data->{commands})
     {
@@ -1586,11 +1608,11 @@ sub HPSU_Read_JSON_File($)
             next;
           }
         }
-        return -10 if (not $data->{commands}{$key}{name});
-        return -10 if (not $data->{commands}{$key}{command});
+        return (-__LINE__, "Error $key") if (not $data->{commands}{$key}{name});
+        return (-__LINE__, "Error $key") if (not $data->{commands}{$key}{command});
         #return -10 if (not $data->{commands}{$key}{id});  --->  no longer used since version 1.13
-        return -10 if (not $data->{commands}{$key}{divisor});
-        return -10 if (not $data->{commands}{$key}{type});
+        return (-__LINE__, "Error $key") if (not $data->{commands}{$key}{divisor});
+        return (-__LINE__, "Error $key") if (not $data->{commands}{$key}{type});
 
         $cnt += 1;
       }
@@ -1599,13 +1621,12 @@ sub HPSU_Read_JSON_File($)
     }
     else
     {
-      return -2;
+      return (-__LINE__, "Invalid json: no \"commands\"");
     }
-
   }
   else
   {
-    return -3;
+    return (-__LINE__, "Invalid json: unknown");
   }
 
   return ($cnt, $data->{version});
@@ -1615,11 +1636,11 @@ sub HPSU_CAN_ParamToFind($$)
 {
   my ($hash, $CANMsg) = @_;
   my $jcmd = $hash->{jcmd};
-  my $val = undef;
   my $cstart = 6; #address
   my $canz = 8;   #address char length
 
   return undef if (!$CANMsg or length($CANMsg) < $canz);
+  return undef if (not defined $jcmd);
 
   if (substr($CANMsg, $cstart, 2) eq "FA")
   {
@@ -1707,10 +1728,14 @@ sub HPSU_CAN_ParseMsg($$)
   elsif ($type eq "value")
   {
     $value = $ValByte1;
+    #example: mode_01 val 4       -> 31 00 FA 01 12 04 00
+    #                                                ^
   }
   elsif ($type eq "longint")
   {
     $value = HPSU_toSigned($ValByte2 + $ValByte1 * 0x0100, $unit);
+    #example: one_hot_water val 1 -> 31 00 FA 01 44 00 01
+    #                                                   ^
   }
   elsif ($type eq "float")
   {
@@ -1983,6 +2008,21 @@ sub HPSU_Log($)
   my $fh = undef;
 
   open($fh, ">>:encoding(UTF-8)",  "$attr{global}{modpath}/FHEM/70_HPSU_Log.log") || return undef;
+  $strout =~ s/\r/<\\r>/g;
+  $strout =~ s/\n/<\\n>/g;
+  print $fh HPSU_getLoggingTime().": ".$strout."\n";
+  close($fh);
+
+  return undef;
+}
+
+sub HPSU_RAW_Log($)
+{
+  my ($str) = @_;
+  my $strout = $str;
+  my $fh = undef;
+
+  open($fh, ">>:encoding(UTF-8)",  "$attr{global}{modpath}/FHEM/70_HPSU_Raw.log") || return undef;
   $strout =~ s/\r/<\\r>/g;
   $strout =~ s/\n/<\\n>/g;
   print $fh HPSU_getLoggingTime().": ".$strout."\n";
