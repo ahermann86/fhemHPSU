@@ -5,6 +5,13 @@ FHEM Module to communicate with a Rotex HPSU
 
 Changelog:
 
+1.16 # 27.11.2022
+- TimeSuspend für AntiShortCycle wird nun aus dem Attribut AntiShortCycle übernommen falls vorhanden
+- Wenn AntiContinousHeating abgeschaltet wird, übrig gebliebenes State löschen
+- JSON_version check fixed
+- CANSetTries wird durch retries in "write" nicht mehr benötigt
+- Code optimiert/bereinigt
+
 1.15 # 23.12.2021
 - Wenn beim Parsen der JSON Datei ein Fehler auftritt, wird der Fehlertext über das Internal "JSON_version" ausgegeben.
 - Wenn AntiContinousHeating aktiv ist, kann der Modus nicht direkt geändert werden. Er wird dann erst nach dem Abtauen übernommen
