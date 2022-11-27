@@ -1,5 +1,5 @@
 {
-	"version" : "3.9",
+	"version" : "3.10",
 	"commands":{
 		"t_hs" : {
 			"name" : "Vorlauftemperatur_Waermeerzeuger",
@@ -526,12 +526,12 @@
 			"type" : "float"
 		},
 		"hyst_hp" : {
-			"name" : "hyst_hp",
+			"name" : "Hysterese_WW",
 			"system" : "comfort|ultra",
 			"command" : "31 00 FA 06 91 00 00",
 			"divisor" : "10",
 			"writable" : "true",
-			"FHEMControl" : "disabled",
+			"FHEMControl" : "slider,2,1,20",
 			"FHEMPollTime" : 0,
 			"unit" : "deg",
 			"type" : "float"
