@@ -91,6 +91,7 @@
 #           10.02.22 - if AntiContinousHeating is not active fixed
 #                    - Attr: JSON_version check fixed
 #           14.03.22 - CANSetTries no longer needed (since 1.14)
+# ah 1.17 - 22.01.23 - New JSON Parameter: "repeatTime". Check set after x secounds
 
 #ToDo:
 # - suppress retry
@@ -103,7 +104,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.16';
+use constant HPSU_MODULEVERSION => '1.17';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -1221,7 +1222,7 @@ sub HPSU_Task($)
       $hash->{helper}{AntiCHeat}{StateTime} = gettimeofday();
       $hash->{helper}{AntiCHeat}{State}++;
       
-      push @{$hash->{helper}{queue}}, "mode_01;$hash->{helper}{AntiCHeat}{BModeStart}";
+      push @{$hash->{helper}{queue}}, "mode_01;$hash->{helper}{AntiCHeat}{BModeStart}";      
       HPSU_Log("HPSU ".__LINE__.": AntiContinousHeating set to $hash->{helper}{AntiCHeat}{BModeStart}" ) if (AttrVal($name, "DebugLog", "off") =~ "on");
       if(exists $hash->{helper}{t_frost_protect_lst})
       {
@@ -1358,6 +1359,11 @@ sub HPSU_Task($)
                 {
                   my $sque = shift @{$hash->{helper}{queue}};
                   readingsSingleUpdate($hash, "Comm.SetStatus", "Ok: $infoName successfully set to \"$val\" (".__LINE__.")", 1);
+                  if (defined $hash->{jcmd}{$key}{repeatTime})
+                  {
+                    $jcmd->{$key}{repeatPending} = gettimeofday()+$hash->{jcmd}{$key}{repeatTime};
+                    $jcmd->{$key}{repeatVal} = $val;
+                  }
                 }
                 else
                 {
@@ -1420,6 +1426,17 @@ sub HPSU_Task($)
                  or $Age >= $jcmd->{$key}{FHEMPollTime}) #poll time
             {
               HPSU_CAN_RequestReadings($hash, $key, undef);
+              
+              if (defined $hash->{jcmd}{$key}{repeatPending})
+              {
+                if ($hash->{jcmd}{$key}{repeatPending} <= gettimeofday())
+                {
+                  push @{$hash->{helper}{queue}}, "$key;$jcmd->{$key}{repeatVal}";
+                  
+                  delete $hash->{jcmd}{$key}{repeatPending};
+                  delete $hash->{jcmd}{$key}{repeatVal};
+                }
+              }
               last;
             }
           }

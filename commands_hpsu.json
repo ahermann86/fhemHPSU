@@ -1,5 +1,5 @@
 {
-	"version" : "3.10",
+	"version" : "3.11",
 	"commands":{
 		"t_hs" : {
 			"name" : "Vorlauftemperatur_Waermeerzeuger",
@@ -243,6 +243,7 @@
 			"writable" : "true",
 			"FHEMControl" : "value_code",
 			"FHEMPollTime" : 60,
+			"repeatTime" : 600,
 			"unit" : "code",
 			"type" : "value",
 			"value_code" : {
