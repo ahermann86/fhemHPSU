@@ -5,6 +5,10 @@ FHEM Module to communicate with a Rotex HPSU
 
 Changelog:
 
+1.17 # 22.01.2023
+  - Im JSON File ist "repeatTime" hinzu gekommen. Der jeweilige Parameter wird wiederholt nach x Sekunden noch einmal gesetzt.
+  - Ergänzungen JSON Datei V3.11: Parameter repeatTime für Betriebsart mit 600s -> 10 Minuten
+  
 1.16 # 27.11.2022
 - TimeSuspend für AntiShortCycle wird nun aus dem Attribut AntiShortCycle übernommen falls vorhanden
 - Wenn AntiContinousHeating abgeschaltet wird, übrig gebliebenes State löschen
