@@ -5,6 +5,9 @@ FHEM Module to communicate with a Rotex HPSU
 
 Changelog:
 
+1.18 # 05.02.2023
+  - AntiShortCycleVal -> zweiter Parameter [Zeit der durchgehend anstehenden Temperaturüberschreitung] als Kommazahl angebbar.
+
 1.17 # 22.01.2023
   - Im JSON File ist "repeatTime" hinzu gekommen. Der jeweilige Parameter wird nach x Sekunden noch einmal gesetzt.
   - Ergänzungen JSON Datei V3.11: Parameter repeatTime für Betriebsart mit 600s -> 10 Minuten
