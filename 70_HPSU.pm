@@ -92,6 +92,7 @@
 #                    - Attr: JSON_version check fixed
 #           14.03.22 - CANSetTries no longer needed (since 1.14)
 # ah 1.17 - 22.01.23 - New JSON Parameter: "repeatTime". Check set after x secounds
+# ah 1.18 - 05.02.23 - AntiShortCycleVal -> MinTimeMaxDiff as dec with comma
 
 #ToDo:
 # - suppress retry
@@ -104,7 +105,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.17';
+use constant HPSU_MODULEVERSION => '1.18';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -949,7 +950,7 @@ sub HPSU_Task($)
     
     if ($AktMode eq $hash->{jcmd}{mode}{value_code}{"1"})      #"Heizen"
     {
-      if ($AntiShortCycleVal =~ /^\d+;\d+;\d+$/)
+      if ($AntiShortCycleVal =~ /^\d+;\d+(.\d+){0,1};\d+$/)
       {
         ($MaxDiff, $MinTimeMaxDiff, $TimeSuspend) = split(";", $AntiShortCycleVal);
       }
@@ -999,7 +1000,7 @@ sub HPSU_Task($)
         }
         else
         {
-          if ($AntiShortCycleVal =~ /^\d+;\d+;\d+$/)
+          if ($AntiShortCycleVal =~ /^\d+;\d+(.\d+){0,1};\d+$/)
           {
             ($MaxDiff, $MinTimeMaxDiff, $TimeSuspend) = split(";", $AntiShortCycleVal);
           }
