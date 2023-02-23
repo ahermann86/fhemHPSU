@@ -93,6 +93,7 @@
 #           14.03.22 - CANSetTries no longer needed (since 1.14)
 # ah 1.17 - 22.01.23 - New JSON Parameter: "repeatTime". Check set after x secounds
 # ah 1.18 - 05.02.23 - AntiShortCycleVal -> MinTimeMaxDiff as dec with comma
+# ah 1.19 - 23.02.23 - AntiShortCycleVal -> regex fixed
 
 #ToDo:
 # - suppress retry
@@ -105,7 +106,7 @@ use DevIo; # load DevIo.pm if not already loaded
 use JSON;
 use SetExtensions;
 
-use constant HPSU_MODULEVERSION => '1.18';
+use constant HPSU_MODULEVERSION => '1.19';
 
 #Prototypes
 sub HPSU_Disconnect($);
@@ -684,7 +685,7 @@ sub HPSU_Attr($$$$)
     {
       if ($attrValue ne "0")
       {
-        return "Wrong parameters - examples are: \"0\", \"1\" or \"1;3;30\"" if (not ($attrValue =~ /(^\d+;\d+;\d+$)|(^\d+$)/));
+        return "Wrong parameters - examples are: \"0\", \"1\" or \"1;3;30\"" if (not ($attrValue =~ /(^\d+;\d+(.\d+){0,1};\d+$)|(^\d+$)/));
         readingsSingleUpdate($hash, "Info.AntiShortCycle", "Idle", 1);
         return undef;
       }
