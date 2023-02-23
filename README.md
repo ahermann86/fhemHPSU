@@ -4,7 +4,8 @@ FHEM Module to communicate with a Rotex HPSU
 <img src="https://user-images.githubusercontent.com/48262831/111051497-bf34e980-8453-11eb-8b21-cd32ab6ee082.jpg" alt="Testaufbau" width="600"/>
 
 Changelog:
-
+1.19 # 23.02.23
+  - AntiShortCycleVal -> regex fixed
 1.18 # 05.02.2023
   - AntiShortCycleVal -> zweiter Parameter [Zeit der durchgehend anstehenden Temperaturüberschreitung] als Kommazahl angebbar.
 
