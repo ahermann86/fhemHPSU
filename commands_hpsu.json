@@ -1178,7 +1178,7 @@
 		"t_screed_day7" : {
 			"name" : "screed_day7",
 			"system" : "comfort|ultra",
-			"command" : "61 00 FA 0B BD 00 00",
+			"command" : "61 00 FA 0B BF 00 00",
 			"divisor" : "10",
 			"writable" : "true",
 			"FHEMControl" : "disabled",
@@ -1343,7 +1343,7 @@
 		"t_screed_day22" : {
 			"name" : "screed_day22",
 			"system" : "comfort|ultra",
-			"command" : "61 00 FA 0B CD 00 00",
+			"command" : "61 00 FA 0B CE 00 00",
 			"divisor" : "10",
 			"writable" : "true",
 			"FHEMControl" : "disabled",
